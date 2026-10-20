@@ -1,0 +1,36 @@
+{
+  "name": "vespera-atelier",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Privacy-First Multi-Vendor Fashion Marketplace",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "build": "tsc",
+    "auth:bootstrap-owner": "tsx scripts/bootstrap-owner.ts"
+  },
+  "keywords": [
+    "fashion",
+    "marketplace",
+    "privacy-first",
+    "multi-vendor",
+    "ecommerce"
+  ],
+  "author": "Vespera Atelier Engineering",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.6.5",
+    "@types/uuid": "^10.0.0",
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "uuid": "^14.0.3",
+    "vitest": "^5.0.5",
+    "zod": "^4.6.7"
+  }
+}
