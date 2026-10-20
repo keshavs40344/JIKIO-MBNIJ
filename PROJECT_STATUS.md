@@ -5,7 +5,7 @@
 - **Architecture Model:** Modular Monolith (TypeScript + Next.js App Router Web Portals + NestJS/Node Domain Backend + PostgreSQL Database)
 - **Current Phase:** Phase 3 Foundation Only (Zero-Trust Identity, Roles, Authorization Guards, Private Storage Abstraction, Safe Audit Logs & Negative Test Suites)
 - **Status Date:** October 2026
-- **Build Status:** Verified (Test: 10/10 passed, Typecheck: Passed, Build: Passed, Secret Scan: Zero leaks)
+- **Build Status:** Verified (Test: 18/18 passed across 2 suites, Typecheck: Passed, Build: Passed, Secret Scan: Zero leaks)
 
 ---
 
@@ -16,7 +16,7 @@
 | **Phase 0** | Workspace Audit, Safety Scan, Git Init & Gitignore | **IMPLEMENTED AND TESTED** | Git initialized on `main`, zero credentials or personal data committed, strict `.gitignore` & dummy `.env.example`. |
 | **Phase 1** | Competitor Feature Research (Myntra, Amazon, Raymond, Manyavar) | **IMPLEMENTED AND TESTED** | Public feature matrix documented in architecture artifacts with Observed/Inferred/Proposed/Unknown distinctions. |
 | **Phase 2** | Architecture Specs, PRD, Data Map, Threat Model, Spec Delivery | **IMPLEMENTED AND TESTED** | Specifications in `SECURITY.md`, `PRIVACY_DATA_MAP.md`, `THREAT_MODEL.md`, `DEPLOYMENT.md`, `API_SPEC.md`. |
-| **Phase 3** | Foundation: Auth, Roles, RBAC/Tenant Guards, Audit Logs, Storage Interface, Tests | **IMPLEMENTED AND TESTED** | 10 automated security tests passed (`tests/foundation-security.test.ts`), CLI bootstrap tool, strict Zod DTOs. |
+| **Phase 3** | Foundation: Auth, Roles, RBAC/Tenant Guards, Audit Logs, Storage Interface, Tests | **IMPLEMENTED AND TESTED** | 18 automated security tests passed across unit and HTTP API suites (`tests/foundation-security.test.ts`, `tests/http-api-security.test.ts`), CLI bootstrap tool, strict Zod DTOs, Express HTTP API with sanitized errors. |
 | **Phase 4** | Seller Onboarding & Private Owner Verification Workflow | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; ready for execution next. |
 | **Phase 5** | Fashion Catalogue, Variant Engine (Size/Color/Fabric), SKU Matrix & Moderation | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; deferred to Phase 5. |
 | **Phase 6** | Customer Discovery: Search, Dynamic Facets, Mega-Menu, Cart & Repricing | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; deferred to Phase 6. |
