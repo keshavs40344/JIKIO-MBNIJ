@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vespera Atelier — Haute Couture & Ready-to-Wear Multi-Vendor Marketplace</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-announcement">
+    Complimentary White-Glove Atelier Delivery on Orders Over ₹2,999 • Handcrafted Luxury Couture
+  </div>
+
+  <!-- Main Site Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a class="logo-container" onclick="switchView('storefront')">
+          <h1 class="brand-title">VESPERA ATELIER</h1>
+          <span class="logo-sub">HAUTE COUTURE & READY-TO-WEAR</span>
+        </a>
+      </div>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a class="nav-link" onclick="filterByCategory('')">All Heirlooms</a></li>
+          <li><a class="nav-link" onclick="filterByCategory('cat_ethnic')">Ethnic Wear</a></li>
+          <li><a class="nav-link" onclick="filterByCategory('cat_wedding')">Wedding & Festive</a></li>
+          <li><a class="nav-link" onclick="filterByCategory('cat_women')">Women</a></li>
+          <li><a class="nav-link" onclick="filterByCategory('cat_men')">Men</a></li>
+          <li><a class="nav-link" onclick="filterByCategory('cat_footwear')">Footwear</a></li>
+          <li><a class="nav-link" onclick="filterByCategory('cat_accessories')">Accessories</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-right">
+        <!-- Portal Selector -->
+        <button class="portal-badge current" id="badge-storefront" onclick="switchView('storefront')">Customer Store</button>
+        <button class="portal-badge" id="badge-seller" onclick="switchView('seller')">Seller Workspace</button>
+        <button class="portal-badge" id="badge-admin" onclick="switchView('admin')">Platform Owner</button>
+
+        <button class="btn btn-outline btn-sm" onclick="openCartDrawer()">
+          Bag (<span id="cart-count">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       VIEW 1: CUSTOMER STOREFRONT
+       ======================================================================== -->
+  <main id="view-storefront" class="portal-view active">
+    <!-- Editorial Hero -->
+    <section class="hero-editorial">
+      <p class="hero-subtitle">Autumn / Festive 2026 Collection</p>
+      <h2>The Bridal & Festive Heirlooms</h2>
+      <p class="hero-lead">Handcrafted Banarasi Katan silks, delicate Chanderi tissue weaves, and bespoke tailored Bandhgalas from India's master artisanal guilds.</p>
+      <button class="btn btn-accent" onclick="scrollToDiscovery()">Explore Collection</button>
+    </section>
+
+    <!-- Curated Category Hubs -->
+    <section class="section-wrapper">
+      <div class="section-header">
+        <div>
+          <h3>Curated Categories</h3>
+          <p style="color: var(--color-ink-secondary); font-size: 0.9rem;">Master artisanal craftsmanship across heritage traditions.</p>
+        </div>
+      </div>
+      <div class="category-grid" id="category-tiles-container">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- Discovery & Merchandising Grid -->
+    <section class="section-wrapper" id="discovery-section">
+      <div class="section-header">
+        <div>
+          <h3>Artisanal Collection</h3>
+          <p style="color: var(--color-ink-secondary); font-size: 0.9rem;">Verified authentic garments from approved master weavers and luxury ateliers.</p>
+        </div>
+        <span id="product-count-display" style="font-size: 0.85rem; color: var(--color-ink-muted);">Showing luxury creations</span>
+      </div>
+
+      <!-- Filters & Facets Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label class="filter-label" for="filter-search">Search</label>
+          <input type="text" id="filter-search" class="filter-select" placeholder="Search by weave, fabric..." oninput="handleSearchInput(event)">
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="filter-fabric">Fabric</label>
+          <select id="filter-fabric" class="filter-select" onchange="applyFilters()">
+            <option value="">All Fabrics</option>
+            <option value="Pure Silk">Pure Silk</option>
+            <option value="Chanderi Silk">Chanderi Silk</option>
+            <option value="Tussar Silk">Tussar Silk</option>
+            <option value="Pure Leather & Silk">Leather & Silk</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="filter-occasion">Occasion</label>
+          <select id="filter-occasion" class="filter-select" onchange="applyFilters()">
+            <option value="">All Occasions</option>
+            <option value="Wedding">Wedding</option>
+            <option value="Festive">Festive</option>
+            <option value="Cocktail">Cocktail</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label" for="filter-sort">Sort By</label>
+          <select id="filter-sort" class="filter-select" onchange="applyFilters()">
+            <option value="newest">Newest Arrivals</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+          </select>
+        </div>
+
+        <button class="btn btn-outline btn-sm" onclick="resetFilters()">Reset</button>
+      </div>
+
+      <!-- Product Cards Grid -->
+      <div class="product-grid" id="product-grid-container">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       VIEW 2: SELLER WORKSPACE
+       ======================================================================== -->
+  <main id="view-seller" class="portal-view">
+    <div class="section-wrapper">
+      <div class="section-header">
+        <div>
+          <h3>Seller Atelier Workspace</h3>
+          <p style="color: var(--color-ink-secondary); font-size: 0.9rem;">Manage your fashion store, variants, assigned sub-orders, and settlement statements.</p>
+        </div>
+        <div id="seller-status-pill">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <div class="portal-tabs">
+        <button class="tab-btn active" onclick="switchSellerTab('orders')">Assigned Orders</button>
+        <button class="tab-btn" onclick="switchSellerTab('catalog')">Catalogue & Variants</button>
+        <button class="tab-btn" onclick="switchSellerTab('settlements')">Settlement Ledger</button>
+        <button class="tab-btn" onclick="switchSellerTab('onboarding')">Store Onboarding</button>
+      </div>
+
+      <!-- Tab: Assigned Orders -->
+      <div id="seller-tab-orders" class="seller-sub-tab">
+        <h4 style="margin-bottom: 16px;">Assigned Fulfilment Orders</h4>
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Sub-Order #</th>
+                <th>Created</th>
+                <th>Items</th>
+                <th>Subtotal</th>
+                <th>Platform Fee (12%)</th>
+                <th>Net Payout</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="seller-orders-tbody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Catalogue & Variants -->
+      <div id="seller-tab-catalog" class="seller-sub-tab" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h4>Your Fashion Catalogue</h4>
+          <button class="btn btn-primary btn-sm" onclick="toggleAddProductForm()">+ Add New Garment</button>
+        </div>
+
+        <!-- Add Garment Form -->
+        <div id="add-product-form" style="display: none; background: #fff; border: 1px solid var(--color-border); padding: 24px; margin-bottom: 24px; border-radius: var(--radius-xs);">
+          <h4 style="margin-bottom: 16px;">Submit Garment for Moderation</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div>
+              <label class="filter-label">Garment Title</label>
+              <input type="text" id="new-prod-title" class="filter-select" style="width: 100%;" placeholder="e.g. Mulberry Silk Kurta">
+            </div>
+            <div>
+              <label class="filter-label">Category</label>
+              <select id="new-prod-cat" class="filter-select" style="width: 100%;">
+                <option value="cat_ethnic">Ethnic Wear</option>
+                <option value="cat_wedding">Wedding & Festive</option>
+                <option value="cat_women">Women's Fashion</option>
+                <option value="cat_men">Men's Fashion</option>
+              </select>
+            </div>
+            <div>
+              <label class="filter-label">Fabric / Material</label>
+              <input type="text" id="new-prod-fabric" class="filter-select" style="width: 100%;" placeholder="e.g. Pure Mulberry Silk">
+            </div>
+            <div>
+              <label class="filter-label">Occasion</label>
+              <input type="text" id="new-prod-occasion" class="filter-select" style="width: 100%;" placeholder="e.g. Wedding Reception">
+            </div>
+            <div>
+              <label class="filter-label">Selling Price (₹)</label>
+              <input type="number" id="new-prod-price" class="filter-select" style="width: 100%;" placeholder="12500">
+            </div>
+            <div>
+              <label class="filter-label">Available Inventory</label>
+              <input type="number" id="new-prod-stock" class="filter-select" style="width: 100%;" placeholder="5">
+            </div>
+          </div>
+          <button class="btn btn-accent btn-sm" onclick="submitNewProduct()">Submit for Authenticity Review</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Fabric</th>
+                <th>Occasion</th>
+                <th>Variants (Size/Price/Stock)</th>
+                <th>Moderation Status</th>
+              </tr>
+            </thead>
+            <tbody id="seller-catalog-tbody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Settlement Ledger -->
+      <div id="seller-tab-settlements" class="seller-sub-tab" style="display: none;">
+        <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-xs); margin-bottom: 24px; display: flex; gap: 32px;">
+          <div>
+            <span class="filter-label">Accrued Settlement Balance</span>
+            <h2 id="seller-balance-display" style="color: var(--color-forest); font-size: 2.2rem;">₹0</h2>
+          </div>
+          <div>
+            <span class="filter-label">Platform Commission Standard</span>
+            <h2 style="font-size: 2.2rem;">12%</h2>
+          </div>
+        </div>
+
+        <h4>Ledger Statement</h4>
+        <div style="overflow-x: auto; margin-top: 12px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Reference Note</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="seller-ledger-tbody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Store Onboarding -->
+      <div id="seller-tab-onboarding" class="seller-sub-tab" style="display: none;">
+        <div style="background: #fff; border: 1px solid var(--color-border); padding: 32px; max-width: 650px; border-radius: var(--radius-xs);">
+          <h4 style="margin-bottom: 8px;">Seller Application & Verification</h4>
+          <p style="font-size: 0.85rem; color: var(--color-ink-muted); margin-bottom: 24px;">Submit business details for platform authenticity vetting. Personal owner details are strictly excluded.</p>
+
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div>
+              <label class="filter-label">Atelier / Store Name</label>
+              <input type="text" id="onboard-store-name" class="filter-select" style="width: 100%;" placeholder="e.g. Royal Silk Handlooms">
+            </div>
+            <div>
+              <label class="filter-label">Business GSTIN (15 Alphanumeric)</label>
+              <input type="text" id="onboard-gstin" class="filter-select" style="width: 100%;" placeholder="09ABCDE1234F1Z5">
+            </div>
+            <div>
+              <label class="filter-label">Business PAN</label>
+              <input type="text" id="onboard-pan" class="filter-select" style="width: 100%;" placeholder="ABCDE1234F">
+            </div>
+            <div>
+              <label class="filter-label">Operating Address</label>
+              <input type="text" id="onboard-address" class="filter-select" style="width: 100%;" placeholder="Studio Address, City, State, PIN">
+            </div>
+            <button class="btn btn-accent" onclick="submitSellerOnboarding()">Submit Verification Application</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       VIEW 3: PLATFORM OWNER / SUPER ADMIN
+       ======================================================================== -->
+  <main id="view-admin" class="portal-view">
+    <div class="section-wrapper">
+      <div class="section-header">
+        <div>
+          <h3>Platform Governance & Super Admin Console</h3>
+          <p style="color: var(--color-ink-secondary); font-size: 0.9rem;">Private administration portal with mandatory MFA and immutable security audit logs.</p>
+        </div>
+        <div id="admin-auth-indicator">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- Admin Login Box (if unauthenticated) -->
+      <div id="admin-login-box" style="background: #fff; border: 1px solid var(--color-border); padding: 32px; max-width: 480px; margin: 40px auto; border-radius: var(--radius-xs);">
+        <h4 style="margin-bottom: 6px;">Super Admin Authentication</h4>
+        <p style="font-size: 0.82rem; color: var(--color-ink-muted); margin-bottom: 20px;">Requires administrator password and 6-digit TOTP MFA verification code.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label class="filter-label">Admin Email</label>
+            <input type="email" id="admin-login-email" class="filter-select" style="width: 100%;" value="admin@vespera.local">
+          </div>
+          <div>
+            <label class="filter-label">Password</label>
+            <input type="password" id="admin-login-pass" class="filter-select" style="width: 100%;" value="VesperaAdmin2026!#">
+          </div>
+          <div>
+            <label class="filter-label">TOTP MFA Code (Use 849201 for test verification)</label>
+            <input type="text" id="admin-login-totp" class="filter-select" style="width: 100%;" placeholder="849201" value="849201">
+          </div>
+          <button class="btn btn-primary" onclick="loginAdmin()">Verify MFA & Enter Console</button>
+        </div>
+      </div>
+
+      <!-- Admin Authenticated Dashboard -->
+      <div id="admin-dashboard-content" style="display: none;">
+        <!-- KPI Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+          <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border);">
+            <span class="filter-label">Total Sellers</span>
+            <h2 id="kpi-sellers" style="font-size: 2.4rem;">0</h2>
+          </div>
+          <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border);">
+            <span class="filter-label">Pending Verification</span>
+            <h2 id="kpi-pending-sellers" style="font-size: 2.4rem; color: var(--color-ochre);">0</h2>
+          </div>
+          <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border);">
+            <span class="filter-label">Approved Products</span>
+            <h2 id="kpi-products" style="font-size: 2.4rem; color: var(--color-forest);">0</h2>
+          </div>
+          <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border);">
+            <span class="filter-label">Moderation Queue</span>
+            <h2 id="kpi-pending-prods" style="font-size: 2.4rem; color: var(--color-crimson);">0</h2>
+          </div>
+        </div>
+
+        <div class="portal-tabs">
+          <button class="tab-btn active" onclick="switchAdminTab('sellers')">Seller Verification Queue</button>
+          <button class="tab-btn" onclick="switchAdminTab('moderation')">Product Moderation Queue</button>
+          <button class="tab-btn" onclick="switchAdminTab('audit')">Immutable Audit Logs</button>
+        </div>
+
+        <!-- Tab: Seller Queue -->
+        <div id="admin-tab-sellers" class="admin-sub-tab">
+          <h4 style="margin-bottom: 16px;">Seller Applications</h4>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Store Name</th>
+                <th>GSTIN</th>
+                <th>PAN</th>
+                <th>Operating Address</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-sellers-tbody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: Product Moderation -->
+        <div id="admin-tab-moderation" class="admin-sub-tab" style="display: none;">
+          <h4 style="margin-bottom: 16px;">Garment Authenticity & Content Moderation</h4>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Garment Title</th>
+                <th>Seller Store</th>
+                <th>Fabric / Occasion</th>
+                <th>Brand Claim</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-moderation-tbody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tab: Audit Logs -->
+        <div id="admin-tab-audit" class="admin-sub-tab" style="display: none;">
+          <h4 style="margin-bottom: 16px;">Security & Operational Audit Trail (Sanitized)</h4>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Actor Role</th>
+                <th>Action</th>
+                <th>Target Type</th>
+                <th>IP Hash (Pseudonymized)</th>
+                <th>Sanitized Details</th>
+              </tr>
+            </thead>
+            <tbody id="admin-audit-tbody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       MODAL 1: PRODUCT DETAILS & INTERACTIVE SIZE GUIDE
+       ======================================================================== -->
+  <div class="modal-backdrop" id="product-modal">
+    <div style="background: #fff; width: 90%; max-width: 900px; margin: auto; max-height: 90vh; overflow-y: auto; border-radius: var(--radius-xs); position: relative; padding: 36px;">
+      <button class="close-btn" style="position: absolute; top: 16px; right: 20px;" onclick="closeProductModal()">&times;</button>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 36px;">
+        <div>
+          <div style="width: 100%; padding-top: 133.33%; position: relative; background: #F4F3ED;">
+            <img id="modal-product-img" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+          </div>
+        </div>
+
+        <div>
+          <span id="modal-product-seller" class="product-seller">Atelier</span>
+          <h2 id="modal-product-title" style="font-size: 2rem; margin-bottom: 8px;">Garment Title</h2>
+          <div class="price-main" id="modal-product-price" style="font-size: 1.6rem; margin-bottom: 16px;">₹0</div>
+          
+          <p id="modal-product-desc" style="font-size: 0.9rem; color: var(--color-ink-secondary); margin-bottom: 20px; line-height: 1.6;"></p>
+
+          <div style="margin-bottom: 20px;">
+            <label class="filter-label">Available Color Variants</label>
+            <div id="modal-colors-container" style="display: flex; gap: 8px; margin-top: 6px;"></div>
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <label class="filter-label">Select Size</label>
+              <a style="font-size: 0.75rem; text-decoration: underline; cursor: pointer; color: var(--color-champagne);" onclick="toggleSizeGuide()">View Atelier Size Guide</a>
+            </div>
+            <div id="modal-sizes-container" style="display: flex; gap: 8px; margin-top: 6px;"></div>
+          </div>
+
+          <!-- Collapsible Size Guide -->
+          <div id="size-guide-box" style="display: none; background: var(--color-canvas); border: 1px solid var(--color-border); padding: 14px; margin-bottom: 20px; font-size: 0.78rem;">
+            <strong>Vespera Couture Measurement Standard (Inches)</strong>
+            <p>• Size S (38): Chest 38-39" | Waist 32-33" | Length 44"</p>
+            <p>• Size M (40): Chest 40-41" | Waist 34-35" | Length 45"</p>
+            <p>• Size L (42): Chest 42-43" | Waist 36-37" | Length 45.5"</p>
+            <p>• Free Size (Sari): Length 5.5 Metres + 0.8m Blouse Piece</p>
+          </div>
+
+          <div style="border-top: 1px solid var(--color-border); padding-top: 18px; margin-bottom: 24px; font-size: 0.82rem; color: var(--color-ink-secondary);">
+            <p><strong>Fabric:</strong> <span id="modal-product-fabric">Pure Silk</span></p>
+            <p><strong>Occasion:</strong> <span id="modal-product-occasion">Wedding</span></p>
+            <p><strong>Care:</strong> <span id="modal-product-care">Dry clean only</span></p>
+          </div>
+
+          <button class="btn btn-accent" style="width: 100%; padding: 14px;" onclick="addCurrentModalToBag()">Add to Bespoke Bag</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: CART SLIDE-OVER DRAWER
+       ======================================================================== -->
+  <div class="drawer-backdrop" id="cart-drawer-backdrop" onclick="closeCartDrawer()"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="drawer-header">
+      <h3 style="font-size: 1.4rem;">Your Bespoke Bag</h3>
+      <button class="close-btn" onclick="closeCartDrawer()">&times;</button>
+    </div>
+
+    <div class="drawer-body" id="cart-items-list">
+      <!-- Items dynamically populated -->
+    </div>
+
+    <div class="drawer-footer">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem;">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" style="font-weight: 600;">₹0</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: var(--color-ink-secondary);">
+        <span>Apparel GST (5%)</span>
+        <span id="cart-tax">₹0</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 0.85rem; color: var(--color-ink-secondary);">
+        <span>Luxury Courier</span>
+        <span id="cart-shipping">Complimentary</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 1.15rem; font-weight: 700; border-top: 1px solid var(--color-border); padding-top: 10px;">
+        <span>Estimated Total</span>
+        <span id="cart-total">₹0</span>
+      </div>
+      <button class="btn btn-primary" style="width: 100%; padding: 14px;" onclick="openCheckoutModal()">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 3: BESPOKE CHECKOUT
+       ======================================================================== -->
+  <div class="modal-backdrop" id="checkout-modal">
+    <div style="background: #fff; width: 90%; max-width: 600px; margin: auto; border-radius: var(--radius-xs); padding: 36px; position: relative;">
+      <button class="close-btn" style="position: absolute; top: 16px; right: 20px;" onclick="closeCheckoutModal()">&times;</button>
+      
+      <h3 style="font-size: 1.8rem; margin-bottom: 4px;">Atelier Checkout</h3>
+      <p style="font-size: 0.82rem; color: var(--color-ink-muted); margin-bottom: 24px;">Orders with multiple sellers are split into dedicated fulfilment sub-orders automatically.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label class="filter-label">Recipient Full Name</label>
+          <input type="text" id="chk-name" class="filter-select" style="width: 100%;" value="Devika Rathore">
+        </div>
+        <div>
+          <label class="filter-label">Delivery Address</label>
+          <input type="text" id="chk-street" class="filter-select" style="width: 100%;" value="14 Palace Enclave, Civil Lines">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label class="filter-label">City</label>
+            <input type="text" id="chk-city" class="filter-select" style="width: 100%;" value="Jaipur">
+          </div>
+          <div>
+            <label class="filter-label">PIN Code</label>
+            <input type="text" id="chk-pin" class="filter-select" style="width: 100%;" value="302006">
+          </div>
+        </div>
+        <div>
+          <label class="filter-label">Contact Phone</label>
+          <input type="text" id="chk-phone" class="filter-select" style="width: 100%;" value="+91-9876543210">
+        </div>
+
+        <div style="border-top: 1px solid var(--color-border); padding-top: 14px; margin-top: 6px;">
+          <label class="filter-label" style="display: block; margin-bottom: 8px;">Select Payment Simulation Mode</label>
+          <div style="display: flex; gap: 12px;">
+            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="radio" name="pay-method" checked> UPI / NetBanking Sandbox
+            </label>
+            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="radio" name="pay-method"> Card Tokenization (Simulated)
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-accent" style="width: 100%; padding: 14px; margin-top: 12px;" onclick="executeCheckoutOrder()">Place Order & Split Fulfilment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client JavaScript Application -->
+  <script src="/app.js"></script>
+</body>
+</html>

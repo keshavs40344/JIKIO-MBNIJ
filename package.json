@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Privacy-First Multi-Vendor Fashion Marketplace",
   "scripts": {
+    "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

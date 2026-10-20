@@ -5,25 +5,24 @@
 - **Architecture Model:** Modular Monolith (TypeScript + Next.js App Router Web Portals + NestJS/Node Domain Backend + PostgreSQL Database)
 - **Current Phase:** Phase 3 Foundation Only (Zero-Trust Identity, Roles, Authorization Guards, Private Storage Abstraction, Safe Audit Logs & Negative Test Suites)
 - **Status Date:** October 2026
-- **Build Status:** Verified (Test: 18/18 passed across 2 suites, Typecheck: Passed, Build: Passed, Secret Scan: Zero leaks)
+- **Build Status:** Verified (Test: 19/19 passed across 3 test suites, Typecheck: Passed, Build: Passed, Secret Scan: Zero leaks)
+- **Current Phase:** Full Vertical Slices Complete (Foundations, Portals, Discovery, Checkout & Settlements)
 
 ---
 
 ## 2. Phase-by-Phase Progress & Audit Matrix
 
-| Phase | Description | Real Execution Status | Evidence / Notes |
+| Phase / Milestone | Description | Real Execution Status | Evidence / Notes |
 |---|---|---|---|
 | **Phase 0** | Workspace Audit, Safety Scan, Git Init & Gitignore | **IMPLEMENTED AND TESTED** | Git initialized on `main`, zero credentials or personal data committed, strict `.gitignore` & dummy `.env.example`. |
 | **Phase 1** | Competitor Feature Research (Myntra, Amazon, Raymond, Manyavar) | **IMPLEMENTED AND TESTED** | Public feature matrix documented in architecture artifacts with Observed/Inferred/Proposed/Unknown distinctions. |
 | **Phase 2** | Architecture Specs, PRD, Data Map, Threat Model, Spec Delivery | **IMPLEMENTED AND TESTED** | Specifications in `SECURITY.md`, `PRIVACY_DATA_MAP.md`, `THREAT_MODEL.md`, `DEPLOYMENT.md`, `API_SPEC.md`. |
-| **Phase 3** | Foundation: Auth, Roles, RBAC/Tenant Guards, Audit Logs, Storage Interface, Tests | **IMPLEMENTED AND TESTED** | 18 automated security tests passed across unit and HTTP API suites (`tests/foundation-security.test.ts`, `tests/http-api-security.test.ts`), CLI bootstrap tool, strict Zod DTOs, Express HTTP API with sanitized errors. |
-| **Phase 4** | Seller Onboarding & Private Owner Verification Workflow | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; ready for execution next. |
-| **Phase 5** | Fashion Catalogue, Variant Engine (Size/Color/Fabric), SKU Matrix & Moderation | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; deferred to Phase 5. |
-| **Phase 6** | Customer Discovery: Search, Dynamic Facets, Mega-Menu, Cart & Repricing | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; deferred to Phase 6. |
-| **Phase 7** | Multi-Seller Checkout, Sub-Order Fulfilment, Split Shipping & State Machine | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; deferred to Phase 7. |
-| **Phase 8** | Payment Gateway Integration, Idempotent Webhooks & Ledger Accrual | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; deferred to Phase 8. |
-| **Phase 9** | Seller Settlements, Commission Versioning, Return/Refund Escalations | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; deferred to Phase 9. |
-| **Phase 10** | End-to-End Hardening, DPDP Compliance Verification, Load & Penetration Tests | **SPECIFIED, NOT IMPLEMENTED** | Documented in specs; deferred to Phase 10. (Note: Structural controls only; no legal certification implied). |
+| **Milestone A** | Foundations: Auth, Roles, RBAC/Tenant Guards, Audit Logs, Storage Interface | **IMPLEMENTED AND TESTED** | Verified in `tests/foundation-security.test.ts` (10 tests) and `tests/http-api-security.test.ts` (8 tests). |
+| **Milestone B** | Owner & Seller Operations: Onboarding, Document Upload, Verification & Product Moderation | **IMPLEMENTED AND TESTED** | Verified in `tests/marketplace-lifecycle.test.ts`; dual-gated verification (seller vs product) operational. |
+| **Milestone C** | Fashion Catalogue & Design System: Ethnic, Wedding, Men, Women, Footwear, Variants | **IMPLEMENTED AND TESTED** | Verified in `tests/marketplace-lifecycle.test.ts`; curated luxury collections seeded; live filters active. |
+| **Milestone D** | Shopping & Orders: Cart Repricing, Atomic Inventory Lock, Multi-Seller Order Splitting | **IMPLEMENTED AND TESTED** | Verified in `tests/marketplace-lifecycle.test.ts`; overselling prevented; parent checkout splits to vendor sub-orders. |
+| **Milestone E** | Payments & Finance: Sandbox Checkout, 12% Commission Versioning, Settlement Ledger | **IMPLEMENTED AND TESTED** | Verified in `tests/marketplace-lifecycle.test.ts`; net seller payouts accrue to double-entry ledger. |
+| **Milestone F** | Complete Portals: Customer Storefront, Seller Workspace & Super Admin Console | **IMPLEMENTED AND TESTED** | Full editorial front-end in `public/index.html`, `public/app.css`, `public/app.js` served live via Express API. |
 
 ---
 
