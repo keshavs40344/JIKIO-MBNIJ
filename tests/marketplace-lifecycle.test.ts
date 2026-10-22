@@ -5,6 +5,7 @@ import { FoundationRepository } from "../src/database/repository.js";
 import { TokenService } from "../src/auth/token.service.js";
 import { SessionManager } from "../src/auth/session-manager.js";
 import { PasswordService } from "../src/auth/password.service.js";
+import { MfaService } from "../src/auth/mfa.service.js";
 import { SafeStorageService, LocalProtectedStorageProvider } from "../src/storage/storage.service.js";
 import { AuditLogger } from "../src/audit/audit-logger.js";
 import { UserRole, VerificationStatus } from "../src/types/auth.js";
@@ -46,6 +47,7 @@ describe("Milestones B, C, D, E: Marketplace Lifecycle Integration Test Suite", 
       role: UserRole.SUPER_ADMIN,
       isActive: true,
       isMfaEnabled: true,
+      mfaSecret: MfaService.generateTotpSecret(),
       createdAt: new Date(),
       updatedAt: new Date(),
     });

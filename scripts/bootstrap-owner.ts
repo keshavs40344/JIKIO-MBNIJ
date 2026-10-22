@@ -25,7 +25,7 @@ export async function bootstrapSuperAdmin(
   providedToken?: string,
   providedEmail?: string,
   providedPassword?: string
-): Promise<{ success: boolean; message: string; userId?: string }> {
+): Promise<{ success: boolean; message: string; userId?: string; totpSecret?: string }> {
   const expectedToken = process.env.OWNER_BOOTSTRAP_INVITE_TOKEN;
 
   if (!expectedToken || expectedToken.includes("placeholder")) {
@@ -72,6 +72,7 @@ export async function bootstrapSuperAdmin(
     role: UserRole.SUPER_ADMIN,
     isActive: true,
     isMfaEnabled: true,
+    mfaSecret: totpSecret,
     createdAt: new Date(),
     updatedAt: new Date(),
   });
@@ -80,6 +81,7 @@ export async function bootstrapSuperAdmin(
     success: true,
     message: "Super Admin account successfully bootstrapped with mandatory MFA enabled.",
     userId: user.id,
+    totpSecret,
   };
 }
 

@@ -25,10 +25,23 @@ import {
   RepricedCart,
   RepricedCartItem,
   SettlementLedgerRecord,
+  TaxVerificationStatus,
+  ShippingMethod,
+  PERMITTED_GST_RATES,
+  ApprovedTaxConfig,
+  validateHsnSyntax,
 } from "../types/marketplace.js";
 import { ISessionRepository } from "../auth/session-manager.js";
 import { IAuditRepository } from "../audit/audit-logger.js";
 import crypto from "crypto";
+import bcrypt from "bcryptjs";
+
+export interface MarketplacePolicyConfig {
+  gstRate: number;
+  freeShippingThreshold: number;
+  standardShippingFee: number;
+  standardCommissionRate: number;
+}
 
 export class FoundationRepository implements ISessionRepository, IAuditRepository {
   private users: Map<string, UserRecord> = new Map();
@@ -46,20 +59,186 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
   private paymentTransactions: Map<string, PaymentTransactionRecord> = new Map();
   private settlementLedgers: Map<string, SettlementLedgerRecord[]> = new Map(); // sellerId -> entries
 
-  constructor() {
+  public readonly policyConfig: MarketplacePolicyConfig;
+
+  constructor(config?: Partial<MarketplacePolicyConfig>) {
+    this.policyConfig = {
+      gstRate: config?.gstRate ?? (Number(process.env.GST_RATE) || 0.05),
+      freeShippingThreshold: config?.freeShippingThreshold ?? (Number(process.env.FREE_SHIPPING_THRESHOLD) || 2999),
+      standardShippingFee: config?.standardShippingFee ?? (Number(process.env.STANDARD_SHIPPING_FEE) || 250),
+      standardCommissionRate: config?.standardCommissionRate ?? (Number(process.env.STANDARD_COMMISSION_RATE) || 0.12),
+    };
     this.seedInitialCategories();
+  }
+
+  // ------------------- INITIAL DEMO USERS SEEDING -------------------
+  public seedDemoUsers(): void {
+    const sellerPasswordHash = bcrypt.hashSync("WeaverPass2026!#", 10);
+    const adminPasswordHash = bcrypt.hashSync("SuperAdminPass2026!#", 10);
+    const customerPasswordHash = bcrypt.hashSync("PatronPass2026!#", 10);
+
+    const demoSeller: UserRecord = {
+      id: "user_weaver_banaras",
+      email: "weaver@banaras.local",
+      phone: "+919876543210",
+      passwordHash: sellerPasswordHash,
+      role: UserRole.APPROVED_SELLER,
+      isActive: true,
+      isMfaEnabled: false,
+      mfaSecret: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const demoAdmin: UserRecord = {
+      id: "admin_owner_vespera",
+      email: "owner@vespera.local",
+      phone: "+919876500001",
+      passwordHash: adminPasswordHash,
+      role: UserRole.SUPER_ADMIN,
+      isActive: true,
+      isMfaEnabled: true,
+      mfaSecret: "11223344556677889900aabbccddeeff00112233",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    const demoCustomer: UserRecord = {
+      id: "customer_patron_demo",
+      email: "patron@heritage.local",
+      phone: "+919876599999",
+      passwordHash: customerPasswordHash,
+      role: UserRole.CUSTOMER,
+      isActive: true,
+      isMfaEnabled: false,
+      mfaSecret: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    if (!this.users.has(demoSeller.id)) this.users.set(demoSeller.id, demoSeller);
+    if (!this.users.has(demoAdmin.id)) this.users.set(demoAdmin.id, demoAdmin);
+    if (!this.users.has(demoCustomer.id)) this.users.set(demoCustomer.id, demoCustomer);
   }
 
   // ------------------- INITIAL CATEGORY SEEDING -------------------
   private seedInitialCategories(): void {
     const defaultCategories: CategoryRecord[] = [
-      { id: "cat_ethnic", name: "Ethnic Wear", slug: "ethnic-wear", description: "Timeless handcrafted saris, kurtas, and traditional lehengas.", displayOrder: 1 },
-      { id: "cat_wedding", name: "Wedding & Festive", slug: "wedding-festive", description: "Opulent wedding couture, sherwanis, and bridal heirlooms.", displayOrder: 2 },
-      { id: "cat_women", name: "Women's Fashion", slug: "womens-fashion", description: "Contemporary luxury designer silhouettes and artisanal separates.", displayOrder: 3 },
-      { id: "cat_men", name: "Men's Fashion", slug: "mens-fashion", description: "Bespoke tailoring, Bandhgalas, fine linen shirts, and Nehru jackets.", displayOrder: 4 },
-      { id: "cat_kids", name: "Kids' Clothing", slug: "kids-clothing", description: "Gentle organic cottons and festive miniature ethnic attire.", displayOrder: 5 },
-      { id: "cat_footwear", name: "Footwear", slug: "footwear", description: "Handcrafted leather juttis, mojaris, and contemporary evening mules.", displayOrder: 6 },
-      { id: "cat_accessories", name: "Bags & Accessories", slug: "accessories", description: "Potli bags, raw silk stoles, dupattas, and handcrafted jewellery.", displayOrder: 7 },
+      {
+        id: "cat_ethnic",
+        name: "Ethnic Wear",
+        slug: "ethnic-wear",
+        description: "Timeless handcrafted saris, kurtas, and traditional lehengas.",
+        displayOrder: 1,
+        subtitle: "Mithila Tussar & Banarasi Weaves",
+        merchandisingTag: "Ancestral Looms",
+        image: "/assets/campaigns/campaign-sarees.jpg",
+        isActive: true,
+        showOnHomepage: true,
+        subcategories: [
+          { id: "sub_sarees_tussar", name: "Tussar Silk Sarees", slug: "tussar-silk-sarees" },
+          { id: "sub_sarees_katan", name: "Banarasi Katan Sarees", slug: "banarasi-katan-sarees" },
+          { id: "sub_kurtas", name: "Handcrafted Kurtas", slug: "handcrafted-kurtas" },
+        ],
+      },
+      {
+        id: "cat_wedding",
+        name: "Wedding & Festive",
+        slug: "wedding-festive",
+        description: "Opulent wedding couture, sherwanis, and bridal heirlooms.",
+        displayOrder: 2,
+        subtitle: "Mulberry Silk Bridal Lehengas",
+        merchandisingTag: "Ceremonial Splendor",
+        image: "/assets/campaigns/campaign-bridal.jpg",
+        isActive: true,
+        showOnHomepage: true,
+        subcategories: [
+          { id: "sub_bridal_lehengas", name: "Bridal Lehengas", slug: "bridal-lehengas" },
+          { id: "sub_sherwanis", name: "Groom Sherwanis", slug: "groom-sherwanis" },
+          { id: "sub_festive_dupatta", name: "Ceremonial Odhnas & Dupattas", slug: "ceremonial-dupattas" },
+        ],
+      },
+      {
+        id: "cat_women",
+        name: "Women's Fashion",
+        slug: "womens-fashion",
+        description: "Contemporary luxury designer silhouettes and artisanal separates.",
+        displayOrder: 3,
+        subtitle: "Handcrafted Zari Angrakhas",
+        merchandisingTag: "Artisanal Silhouettes",
+        image: "/assets/campaigns/campaign-womens-couture.jpg",
+        isActive: true,
+        showOnHomepage: true,
+        subcategories: [
+          { id: "sub_angrakha", name: "Angrakha Anarkalis", slug: "angrakha-anarkalis" },
+          { id: "sub_separates", name: "Couture Tunics & Trousers", slug: "couture-tunics" },
+        ],
+      },
+      {
+        id: "cat_men",
+        name: "Men's Fashion",
+        slug: "mens-fashion",
+        description: "Bespoke tailoring, Bandhgalas, fine linen shirts, and Nehru jackets.",
+        displayOrder: 4,
+        subtitle: "Bespoke Silk Bandhgalas",
+        merchandisingTag: "Bespoke Atelier",
+        image: "/assets/campaigns/campaign-menswear.jpg",
+        isActive: true,
+        showOnHomepage: true,
+        subcategories: [
+          { id: "sub_bandhgalas", name: "Royal Bandhgalas", slug: "royal-bandhgalas" },
+          { id: "sub_nehru_jackets", name: "Nehru Waistcoats", slug: "nehru-waistcoats" },
+          { id: "sub_kurtas_men", name: "Raw Silk Kurtas", slug: "raw-silk-kurtas" },
+        ],
+      },
+      {
+        id: "cat_kids",
+        name: "Kids' Clothing",
+        slug: "kids-clothing",
+        description: "Gentle organic cottons and festive miniature ethnic attire.",
+        displayOrder: 5,
+        subtitle: "Miniature Festive Ensembles",
+        merchandisingTag: "Pure & Gentle",
+        image: "/assets/campaigns/campaign-craft-storytelling.jpg",
+        isActive: true,
+        showOnHomepage: true,
+        subcategories: [
+          { id: "sub_boys_kurta", name: "Boys' Festive Kurtas", slug: "boys-festive-kurtas" },
+          { id: "sub_girls_lehenga", name: "Girls' Miniature Pattu Pavadai", slug: "girls-pattu-pavadai" },
+        ],
+      },
+      {
+        id: "cat_footwear",
+        name: "Footwear",
+        slug: "footwear",
+        description: "Handcrafted leather juttis, mojaris, and contemporary evening mules.",
+        displayOrder: 6,
+        subtitle: "Zardozi Bullion Mojaris",
+        merchandisingTag: "Artisanal Details",
+        image: "/assets/campaigns/campaign-accessories.jpg",
+        isActive: true,
+        showOnHomepage: true,
+        subcategories: [
+          { id: "sub_mojaris", name: "Zardozi Mojaris", slug: "zardozi-mojaris" },
+          { id: "sub_juttis", name: "Embroidered Juttis", slug: "embroidered-juttis" },
+        ],
+      },
+      {
+        id: "cat_accessories",
+        name: "Bags & Accessories",
+        slug: "accessories",
+        description: "Potli bags, raw silk stoles, dupattas, and handcrafted jewellery.",
+        displayOrder: 7,
+        subtitle: "Handpainted Silk Stoles & Potlis",
+        merchandisingTag: "Craft Accents",
+        image: "/assets/campaigns/campaign-accessories.jpg",
+        isActive: true,
+        showOnHomepage: true,
+        subcategories: [
+          { id: "sub_stoles", name: "Handpainted Silk Stoles", slug: "handpainted-silk-stoles" },
+          { id: "sub_potlis", name: "Embroidered Potli Bags", slug: "embroidered-potli-bags" },
+        ],
+      },
     ];
 
     for (const cat of defaultCategories) {
@@ -72,6 +251,21 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
   private seedCuratedProducts(): void {
     const sellerAId = "seller_banaras_heritage";
     const sellerBId = "seller_jaipur_royal";
+    const sellerCId = "seller_mithila_guild";
+
+    this.sellerProfiles.set(sellerCId, {
+      id: sellerCId,
+      userId: "user_artisan_mithila",
+      storeName: "Mithila Master Weavers & Art Guild",
+      businessGstin: "10MITHI9988H1Z4",
+      businessPan: "MITHI9988H",
+      registeredAddress: "Madhubani Artists Quarter, Madhubani, Bihar 847211",
+      verificationStatus: VerificationStatus.APPROVED,
+      verifiedAt: new Date(),
+      verifiedByUserId: "system_admin",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
     this.sellerProfiles.set(sellerAId, {
       id: sellerAId,
@@ -107,6 +301,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           id: "prod_katan_sari",
           sellerId: sellerAId,
           categoryId: "cat_ethnic",
+          subcategoryId: "sub_sarees_katan",
+          audience: "WOMEN",
           title: "Katan Silk Handloom Sari",
           slug: "katan-silk-handloom-sari",
           description: "Woven on traditional pit-looms in Varanasi, this pure Katan silk sari features rich gold kadhwa zari work depicting antique floral meenakari motifs.",
@@ -117,8 +313,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           moderationStatus: ProductModerationStatus.APPROVED,
           brandClaim: "Banaras Heritage Loom",
           images: [
-            "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80",
+            "/assets/campaigns/campaign-sarees.jpg",
+            "/images/campaign-hero.jpg",
           ],
           isActive: true,
           createdAt: new Date(),
@@ -134,6 +330,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           id: "prod_chanderi_angrakha",
           sellerId: sellerAId,
           categoryId: "cat_women",
+          subcategoryId: "sub_angrakha",
+          audience: "WOMEN",
           title: "Chanderi Zari Angrakha Anarkali",
           slug: "chanderi-zari-angrakha-anarkali",
           description: "Handcrafted in gossamer Chanderi silk with delicate golden tissue piping, side-tie closure, and hand-embroidered gotta patti hemline.",
@@ -144,8 +342,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           moderationStatus: ProductModerationStatus.APPROVED,
           brandClaim: "Artisanal Atelier",
           images: [
-            "https://images.unsplash.com/photo-1583391733975-0027f6a70e7e?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80",
+            "/assets/campaigns/campaign-womens-couture.jpg",
+            "/assets/campaigns/campaign-main-hero.jpg",
           ],
           isActive: true,
           createdAt: new Date(),
@@ -162,6 +360,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           id: "prod_tussar_bandhgala",
           sellerId: sellerBId,
           categoryId: "cat_men",
+          subcategoryId: "sub_bandhgalas",
+          audience: "MEN",
           title: "Tussar Silk Embroidered Bandhgala",
           slug: "tussar-silk-embroidered-bandhgala",
           description: "Structured royal Bandhgala jacket crafted from textured wild Tussar silk, featuring handcrafted brass buttons and velvet trim collar.",
@@ -172,8 +372,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           moderationStatus: ProductModerationStatus.APPROVED,
           brandClaim: "Jaipur Bespoke",
           images: [
-            "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80",
+            "/assets/campaigns/campaign-menswear.jpg",
+            "/assets/campaigns/campaign-craft-storytelling.jpg",
           ],
           isActive: true,
           createdAt: new Date(),
@@ -190,6 +390,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           id: "prod_mulberry_lehenga",
           sellerId: sellerBId,
           categoryId: "cat_wedding",
+          subcategoryId: "sub_bridal_lehengas",
+          audience: "WOMEN",
           title: "Mulberry Silk Draped Bridal Lehenga",
           slug: "mulberry-silk-draped-bridal-lehenga",
           description: "A monumental 16-kali heirloom lehenga woven in rich Mulberry silk, embellished with real silver marodi embroidery and zardozi micro-pearls.",
@@ -198,9 +400,10 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           fit: "Flared Bridal Cut",
           careInstructions: "Preserve in archival bridal box. Specialized dry clean only.",
           moderationStatus: ProductModerationStatus.APPROVED,
-          brandClaim: "Vespera Signature",
+          brandClaim: "ICM Madhubani Signature",
           images: [
-            "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
+            "/assets/campaigns/campaign-bridal.jpg",
+            "/assets/campaigns/campaign-sarees.jpg",
           ],
           isActive: true,
           createdAt: new Date(),
@@ -215,6 +418,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           id: "prod_mojaris",
           sellerId: sellerBId,
           categoryId: "cat_footwear",
+          subcategoryId: "sub_mojaris",
+          audience: "MEN",
           title: "Handcrafted Zardozi Leather Mojaris",
           slug: "handcrafted-zardozi-leather-mojaris",
           description: "Curved-toe traditional mojaris crafted from vegetable-tanned leather, hand-embroidered with golden bullion thread and padded velvet insole.",
@@ -225,7 +430,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           moderationStatus: ProductModerationStatus.APPROVED,
           brandClaim: "Royal Footwear Guild",
           images: [
-            "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80",
+            "/assets/campaigns/campaign-accessories.jpg",
+            "/assets/campaigns/campaign-menswear.jpg",
           ],
           isActive: true,
           createdAt: new Date(),
@@ -237,15 +443,114 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
           { sku: "JRW-MOJARI-GOLD-10", colorName: "Antique Gold", colorHex: "#B89758", sizeName: "UK 10", mrp: 4500, price: 3400, availableStock: 5, reservedStock: 0 },
         ],
       },
+      {
+        product: {
+          id: "prod_madhubani_tussar_sari",
+          sellerId: sellerCId,
+          categoryId: "cat_ethnic",
+          subcategoryId: "sub_sarees_tussar",
+          audience: "WOMEN",
+          title: "Handpainted Madhubani Tussar Silk Saree",
+          slug: "handpainted-madhubani-tussar-silk-saree",
+          description: "Authentic handspun Bhagalpuri Tussar silk saree adorned with freehand Kohbar and Tree of Life motifs handpainted using natural organic pigments by master Mithila women artisans.",
+          fabricMaterial: "Tussar Silk",
+          occasion: "Festive",
+          fit: "Traditional Draped",
+          careInstructions: "Dry clean only. Roll in muslin cloth.",
+          moderationStatus: ProductModerationStatus.APPROVED,
+          brandClaim: "ICM Mithila Master Guild",
+          images: [
+            "/images/campaign-hero.jpg",
+            "/assets/campaigns/campaign-craft-storytelling.jpg",
+          ],
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        variants: [
+          { sku: "ICM-TUSSAR-NATURAL-FS", colorName: "Natural Tussar Ecru", colorHex: "#EFE6D8", sizeName: "Free Size", mrp: 19500, price: 15200, availableStock: 5, reservedStock: 0 },
+          { sku: "ICM-TUSSAR-MADDER-FS", colorName: "Mithila Madder Red", colorHex: "#8A2127", sizeName: "Free Size", mrp: 19500, price: 15200, availableStock: 3, reservedStock: 0 },
+        ],
+      },
+      {
+        product: {
+          id: "prod_madhubani_dupatta",
+          sellerId: sellerCId,
+          categoryId: "cat_accessories",
+          subcategoryId: "sub_stoles",
+          audience: "WOMEN",
+          title: "Mithila Handpainted Pure Silk Stole",
+          slug: "mithila-handpainted-pure-silk-stole",
+          description: "Handwoven pure silk stole with fine nib-and-bamboo brushwork depicting traditional Matsya (fish) and Kamal (lotus) motifs symbolizing prosperity and auspicious grace.",
+          fabricMaterial: "Pure Silk",
+          occasion: "Festive",
+          fit: "Standard Drape (2.5m)",
+          careInstructions: "Dry clean recommended.",
+          moderationStatus: ProductModerationStatus.APPROVED,
+          brandClaim: "ICM Madhubani Signature",
+          images: [
+            "/assets/campaigns/campaign-accessories.jpg",
+            "/assets/campaigns/campaign-sarees.jpg",
+          ],
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        variants: [
+          { sku: "ICM-STOLE-OCHRE-FS", colorName: "Royal Ochre", colorHex: "#B8860B", sizeName: "Free Size", mrp: 7500, price: 5800, availableStock: 8, reservedStock: 0 },
+        ],
+      },
     ];
 
+    const hsnTaxMap: Record<string, { hsn: string; rate: number; category: string }> = {
+      prod_katan_sari: { hsn: "5007", rate: 0.05, category: "Handloom Pure Silk Sari" },
+      prod_chanderi_angrakha: { hsn: "6204", rate: 0.05, category: "Handcrafted Women's Ensemble" },
+      prod_tussar_bandhgala: { hsn: "6203", rate: 0.05, category: "Men's Tailored Royal Jacket" },
+      prod_mulberry_lehenga: { hsn: "6204", rate: 0.05, category: "Bridal Heirloom Couture" },
+      prod_mojaris: { hsn: "6403", rate: 0.05, category: "Handcrafted Leather Footwear" },
+      prod_madhubani_tussar_sari: { hsn: "5007", rate: 0.05, category: "Handpainted Tussar Silk Sari" },
+      prod_madhubani_dupatta: { hsn: "6214", rate: 0.05, category: "Handpainted Silk Stole" },
+    };
+
     for (const item of curated) {
-      this.products.set(item.product.id, item.product);
+      const taxInfo = hsnTaxMap[item.product.id] || { hsn: "5007", rate: 0.05, category: "Handloom Heritage Apparel" };
+      const primaryPrice = item.variants[0]?.price || 10000;
+      const approvedConfig: ApprovedTaxConfig = {
+        id: `tax_cfg_${item.product.id}`,
+        productId: item.product.id,
+        hsnCode: taxInfo.hsn,
+        approvedGstRate: taxInfo.rate,
+        taxCategory: taxInfo.category,
+        effectiveFrom: new Date("2026-01-01"),
+        effectiveTo: null,
+        approvedByUserId: "system_admin",
+        approvedAt: new Date("2026-01-01"),
+        decisionReason: "Centrally approved initial artisanal catalog classification.",
+        version: 1,
+      };
+
+      const enrichedProduct: ProductRecord = {
+        ...item.product,
+        costPrice: Math.round(primaryPrice * 0.55),
+        proposedHsn: taxInfo.hsn,
+        proposedGstRate: taxInfo.rate,
+        taxCategory: taxInfo.category,
+        taxClassificationNotes: "Pit-loom woven textile under HSN classification.",
+        taxVerificationStatus: TaxVerificationStatus.APPROVED,
+        approvedTaxConfig: approvedConfig,
+        shippingMethod: ShippingMethod.PLATFORM_STANDARD,
+        sellerDeliveryCharge: 0,
+        dispatchLeadDays: 3,
+        serviceableRegions: ["ALL_INDIA"],
+      };
+
+      this.products.set(enrichedProduct.id, enrichedProduct);
       for (const v of item.variants) {
         const variantId = `var_${v.sku.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`;
         this.variants.set(variantId, {
           id: variantId,
           productId: item.product.id,
+          costPrice: Math.round(v.price * 0.55),
           ...v,
         });
       }
@@ -379,8 +684,37 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
   }
 
   // ------------------- CATEGORIES -------------------
-  public async listCategories(): Promise<CategoryRecord[]> {
-    return Array.from(this.categories.values()).sort((a, b) => a.displayOrder - b.displayOrder);
+  public async listCategories(includeInactive = false): Promise<CategoryRecord[]> {
+    const counts = await this.getCategoryProductCounts();
+    return Array.from(this.categories.values())
+      .filter((c) => includeInactive || c.isActive !== false)
+      .map((c) => ({
+        ...c,
+        productCount: counts[c.id] || 0,
+      }))
+      .sort((a, b) => a.displayOrder - b.displayOrder);
+  }
+
+  public async getCategoryProductCounts(): Promise<Record<string, number>> {
+    const counts: Record<string, number> = {};
+    for (const cat of this.categories.values()) {
+      counts[cat.id] = 0;
+    }
+
+    for (const prod of this.products.values()) {
+      if (prod.moderationStatus !== ProductModerationStatus.APPROVED || !prod.isActive) {
+        continue;
+      }
+      const prodVariants = this.findVariantsByProductId(prod.id);
+      const totalStock = prodVariants.reduce((sum, v) => sum + v.availableStock, 0);
+      if (totalStock <= 0) continue;
+
+      if (counts[prod.categoryId] !== undefined) {
+        counts[prod.categoryId]++;
+      }
+    }
+
+    return counts;
   }
 
   public async findCategoryById(id: string): Promise<CategoryRecord | null> {
@@ -394,15 +728,102 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
     return null;
   }
 
+  public async addCategory(cat: CategoryRecord): Promise<CategoryRecord> {
+    if (this.categories.has(cat.id)) {
+      throw new Error(`Category ID '${cat.id}' already exists.`);
+    }
+    for (const existing of this.categories.values()) {
+      if (existing.slug.toLowerCase() === cat.slug.toLowerCase()) {
+        throw new Error(`Category slug '${cat.slug}' already exists.`);
+      }
+    }
+    const record: CategoryRecord = {
+      ...cat,
+      isActive: cat.isActive !== undefined ? cat.isActive : true,
+      showOnHomepage: cat.showOnHomepage !== undefined ? cat.showOnHomepage : true,
+      subcategories: cat.subcategories || [],
+    };
+    this.categories.set(record.id, record);
+    return record;
+  }
+
+  public async updateCategory(id: string, updates: Partial<CategoryRecord>): Promise<CategoryRecord> {
+    const cat = this.categories.get(id);
+    if (!cat) throw new Error("Category not found.");
+    const updated: CategoryRecord = {
+      ...cat,
+      ...updates,
+      id: cat.id, // Immutable ID
+    };
+    this.categories.set(id, updated);
+    return updated;
+  }
+
+  public async toggleCategoryActive(id: string, isActive: boolean): Promise<CategoryRecord> {
+    const cat = this.categories.get(id);
+    if (!cat) throw new Error("Category not found.");
+    cat.isActive = isActive;
+    return cat;
+  }
+
   // ------------------- PRODUCTS & VARIANTS -------------------
-  public async createProduct(product: ProductRecord, variants: Omit<ProductVariantRecord, "id" | "productId">[]): Promise<{ product: ProductRecord; variants: ProductVariantRecord[] }> {
-    // Check SKU uniqueness
+  public async createProduct(
+    product: ProductRecord,
+    variants: Omit<ProductVariantRecord, "id" | "productId">[]
+  ): Promise<{ product: ProductRecord; variants: ProductVariantRecord[] }> {
+    // Validate variants pricing, cost, stock, and SKU
     for (const v of variants) {
+      if (typeof v.price !== "number" || isNaN(v.price) || v.price <= 0) {
+        throw new Error(`Invalid price for SKU '${v.sku}': Selling price must be a positive number.`);
+      }
+      if (typeof v.mrp === "number" && v.mrp < v.price) {
+        throw new Error(`MRP constraint violation for SKU '${v.sku}': MRP (${v.mrp}) cannot be lower than selling price (${v.price}).`);
+      }
+      if (typeof v.costPrice === "number" && v.costPrice <= 0) {
+        throw new Error(`Invalid cost price for SKU '${v.sku}': Cost price must be a positive number.`);
+      }
+      if (typeof v.availableStock !== "number" || v.availableStock < 0) {
+        throw new Error(`Invalid stock quantity for SKU '${v.sku}': Available stock cannot be negative.`);
+      }
       for (const existing of this.variants.values()) {
         if (existing.sku.toLowerCase() === v.sku.toLowerCase()) {
           throw new Error(`SKU constraint violation: SKU '${v.sku}' is already in use.`);
         }
       }
+    }
+
+    // Syntactic HSN validation (format + chapter)
+    if (product.proposedHsn) {
+      const hsnVal = validateHsnSyntax(product.proposedHsn);
+      if (!hsnVal.valid) {
+        throw new Error(`Invalid HSN code '${product.proposedHsn}': ${hsnVal.reason}`);
+      }
+    }
+
+    // Validate proposed GST rate if provided
+    if (typeof product.proposedGstRate === "number") {
+      if (!PERMITTED_GST_RATES.includes(product.proposedGstRate as any)) {
+        throw new Error(`Invalid GST rate '${product.proposedGstRate}': Permitted rates are 0%, 5%, 12%, 18%, 28%.`);
+      }
+    }
+
+    // Ensure taxVerificationStatus defaults to PENDING_REVIEW if not set
+    if (!product.taxVerificationStatus) {
+      product.taxVerificationStatus = TaxVerificationStatus.PENDING_REVIEW;
+    }
+
+    // Ensure shipping defaults
+    if (!product.shippingMethod) {
+      product.shippingMethod = ShippingMethod.PLATFORM_STANDARD;
+    }
+    if (product.sellerDeliveryCharge === undefined) {
+      product.sellerDeliveryCharge = 0;
+    }
+    if (!product.dispatchLeadDays) {
+      product.dispatchLeadDays = 3;
+    }
+    if (!product.serviceableRegions || product.serviceableRegions.length === 0) {
+      product.serviceableRegions = ["ALL_INDIA"];
     }
 
     this.products.set(product.id, { ...product });
@@ -419,6 +840,234 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
     }
 
     return { product, variants: createdVariants };
+  }
+
+  public async updateProduct(
+    productId: string,
+    updates: Partial<ProductRecord>,
+    variantsUpdates?: { id?: string; sku: string; price: number; mrp?: number; costPrice?: number | null; availableStock: number; colorName?: string; colorHex?: string; sizeName?: string }[]
+  ): Promise<{ product: ProductRecord; variants: ProductVariantRecord[] }> {
+    const existing = this.products.get(productId);
+    if (!existing) {
+      throw new Error(`Product '${productId}' not found.`);
+    }
+
+    // Syntactic HSN validation if updated
+    if (updates.proposedHsn !== undefined && updates.proposedHsn !== null) {
+      const hsnVal = validateHsnSyntax(updates.proposedHsn);
+      if (!hsnVal.valid) {
+        throw new Error(`Invalid HSN code '${updates.proposedHsn}': ${hsnVal.reason}`);
+      }
+    }
+
+    // Validate proposed GST rate if updated
+    if (typeof updates.proposedGstRate === "number") {
+      if (!PERMITTED_GST_RATES.includes(updates.proposedGstRate as any)) {
+        throw new Error(`Invalid GST rate '${updates.proposedGstRate}': Permitted rates are 0%, 5%, 12%, 18%, 28%.`);
+      }
+    }
+
+    // Validate shipping fields
+    if (updates.sellerDeliveryCharge !== undefined && (typeof updates.sellerDeliveryCharge !== "number" || updates.sellerDeliveryCharge < 0)) {
+      throw new Error("Invalid seller delivery charge: Must be a non-negative number.");
+    }
+    if (updates.dispatchLeadDays !== undefined && (typeof updates.dispatchLeadDays !== "number" || updates.dispatchLeadDays < 1 || updates.dispatchLeadDays > 30)) {
+      throw new Error("Invalid dispatch preparation time: Must be between 1 and 30 days.");
+    }
+
+    // Explicit field-presence and material change detection for tax reapproval
+    let materialTaxAttributesChanged = false;
+
+    // Check material product-level attributes
+    if (updates.proposedHsn !== undefined && updates.proposedHsn !== existing.proposedHsn) {
+      materialTaxAttributesChanged = true;
+    }
+    if (updates.proposedGstRate !== undefined && updates.proposedGstRate !== existing.proposedGstRate) {
+      materialTaxAttributesChanged = true;
+    }
+    if (updates.taxCategory !== undefined && updates.taxCategory !== existing.taxCategory) {
+      materialTaxAttributesChanged = true;
+    }
+    if (updates.fabricMaterial !== undefined && updates.fabricMaterial !== existing.fabricMaterial) {
+      materialTaxAttributesChanged = true;
+    }
+    if (updates.title !== undefined && updates.title !== existing.title) {
+      materialTaxAttributesChanged = true;
+    }
+    if (updates.categoryId !== undefined && updates.categoryId !== existing.categoryId) {
+      materialTaxAttributesChanged = true;
+    }
+    if (updates.subcategoryId !== undefined && updates.subcategoryId !== existing.subcategoryId) {
+      materialTaxAttributesChanged = true;
+    }
+
+    // Check variant updates for price changes or variant additions
+    if (Array.isArray(variantsUpdates)) {
+      for (const vUp of variantsUpdates) {
+        if (typeof vUp.price !== "number" || isNaN(vUp.price) || vUp.price <= 0) {
+          throw new Error(`Invalid price for SKU '${vUp.sku}': Selling price must be a positive number.`);
+        }
+        if (typeof vUp.mrp === "number" && vUp.mrp < vUp.price) {
+          throw new Error(`MRP constraint violation for SKU '${vUp.sku}': MRP (${vUp.mrp}) cannot be lower than selling price (${vUp.price}).`);
+        }
+        if (typeof vUp.costPrice === "number" && vUp.costPrice <= 0) {
+          throw new Error(`Invalid cost price for SKU '${vUp.sku}': Cost price must be a positive number.`);
+        }
+        if (typeof vUp.availableStock !== "number" || vUp.availableStock < 0) {
+          throw new Error(`Invalid stock quantity for SKU '${vUp.sku}': Available stock cannot be negative.`);
+        }
+
+        let existingVar = vUp.id ? this.variants.get(vUp.id) : null;
+        if (!existingVar) {
+          for (const ev of this.variants.values()) {
+            if (ev.productId === productId && ev.sku.toLowerCase() === vUp.sku.toLowerCase()) {
+              existingVar = ev;
+              break;
+            }
+          }
+        }
+
+        if (!existingVar) {
+          // New variant added to existing product requires tax review
+          materialTaxAttributesChanged = true;
+        } else {
+          if (typeof vUp.price === "number" && vUp.price !== existingVar.price) {
+            materialTaxAttributesChanged = true;
+          }
+          existingVar.price = vUp.price;
+          if (vUp.mrp !== undefined) existingVar.mrp = vUp.mrp;
+          if (vUp.costPrice !== undefined) existingVar.costPrice = vUp.costPrice;
+          if (vUp.availableStock !== undefined) existingVar.availableStock = vUp.availableStock;
+          if (vUp.colorName) existingVar.colorName = vUp.colorName;
+          if (vUp.colorHex) existingVar.colorHex = vUp.colorHex;
+          if (vUp.sizeName) existingVar.sizeName = vUp.sizeName;
+        }
+      }
+    }
+
+    let newTaxStatus = existing.taxVerificationStatus;
+    let newApprovedTaxConfig = existing.approvedTaxConfig;
+
+    // If material fields changed on an already-approved product, invalidate approval
+    if (materialTaxAttributesChanged && existing.taxVerificationStatus === TaxVerificationStatus.APPROVED) {
+      newTaxStatus = TaxVerificationStatus.PENDING_REVIEW;
+      newApprovedTaxConfig = null;
+    }
+
+    const updatedProduct: ProductRecord = {
+      ...existing,
+      ...updates,
+      taxVerificationStatus: newTaxStatus,
+      approvedTaxConfig: newApprovedTaxConfig,
+      updatedAt: new Date(),
+    };
+
+    this.products.set(productId, updatedProduct);
+
+    const currentVariants = this.findVariantsByProductId(productId);
+    return { product: updatedProduct, variants: currentVariants };
+  }
+
+  public async recordTaxDecision(
+    productId: string,
+    decision: {
+      status: TaxVerificationStatus;
+      approvedGstRate?: number;
+      reason?: string;
+      effectiveFrom?: Date;
+      effectiveTo?: Date | null;
+      adminUserId: string;
+      reviewNotes?: string;
+    }
+  ): Promise<ProductRecord> {
+    const product = this.products.get(productId);
+    if (!product) {
+      throw new Error(`Product '${productId}' not found.`);
+    }
+
+    if (decision.status === TaxVerificationStatus.APPROVED) {
+      const rate = decision.approvedGstRate ?? product.proposedGstRate;
+      if (typeof rate !== "number" || !PERMITTED_GST_RATES.includes(rate as any)) {
+        throw new Error(`Cannot approve tax configuration: Invalid GST rate '${rate}'. Permitted rates are 0%, 5%, 12%, 18%, 28%.`);
+      }
+
+      const version = (product.approvedTaxConfig?.version || 0) + 1;
+      const approvedConfig: ApprovedTaxConfig = {
+        id: crypto.randomUUID(),
+        productId: product.id,
+        hsnCode: product.proposedHsn || "5007",
+        approvedGstRate: rate,
+        taxCategory: product.taxCategory || "Handloom Apparel",
+        effectiveFrom: decision.effectiveFrom || new Date(),
+        effectiveTo: decision.effectiveTo || null,
+        approvedByUserId: decision.adminUserId,
+        approvedAt: new Date(),
+        decisionReason: decision.reason || "Approved by Super Admin",
+        reviewNotes: decision.reviewNotes,
+        version,
+      };
+
+      product.approvedTaxConfig = approvedConfig;
+      product.taxVerificationStatus = TaxVerificationStatus.APPROVED;
+      product.taxRejectionReason = null;
+      product.taxRequestedChanges = null;
+    } else if (decision.status === TaxVerificationStatus.REJECTED) {
+      product.taxVerificationStatus = TaxVerificationStatus.REJECTED;
+      product.taxRejectionReason = decision.reason || "Tax configuration rejected.";
+    } else if (decision.status === TaxVerificationStatus.CHANGES_REQUESTED) {
+      product.taxVerificationStatus = TaxVerificationStatus.CHANGES_REQUESTED;
+      product.taxRequestedChanges = decision.reason || "Additional tax details requested.";
+    } else if (decision.status === TaxVerificationStatus.REVERIFICATION_REQUIRED) {
+      product.taxVerificationStatus = TaxVerificationStatus.REVERIFICATION_REQUIRED;
+    } else if (decision.status === TaxVerificationStatus.TEMPORARILY_RESTRICTED) {
+      product.taxVerificationStatus = TaxVerificationStatus.TEMPORARILY_RESTRICTED;
+    }
+
+    product.updatedAt = new Date();
+    this.products.set(productId, product);
+    return { ...product };
+  }
+
+  public async listTaxProposals(filter?: { status?: TaxVerificationStatus }): Promise<{ product: ProductRecord; seller: SellerProfileRecord }[]> {
+    const list: { product: ProductRecord; seller: SellerProfileRecord }[] = [];
+    for (const prod of this.products.values()) {
+      if (filter?.status && prod.taxVerificationStatus !== filter.status) {
+        continue;
+      }
+      const seller = this.sellerProfiles.get(prod.sellerId);
+      if (seller) {
+        list.push({ product: { ...prod }, seller: { ...seller } });
+      }
+    }
+    return list;
+  }
+
+  public updatePolicyConfig(newConfig: Partial<MarketplacePolicyConfig>): MarketplacePolicyConfig {
+    if (newConfig.gstRate !== undefined) {
+      if (typeof newConfig.gstRate !== "number" || newConfig.gstRate < 0) {
+        throw new Error("Invalid gstRate: Must be a non-negative number.");
+      }
+      this.policyConfig.gstRate = newConfig.gstRate;
+    }
+    if (newConfig.freeShippingThreshold !== undefined) {
+      if (typeof newConfig.freeShippingThreshold !== "number" || newConfig.freeShippingThreshold < 0) {
+        throw new Error("Invalid freeShippingThreshold: Must be a non-negative number.");
+      }
+      this.policyConfig.freeShippingThreshold = newConfig.freeShippingThreshold;
+    }
+    if (newConfig.standardShippingFee !== undefined) {
+      if (typeof newConfig.standardShippingFee !== "number" || newConfig.standardShippingFee < 0) {
+        throw new Error("Invalid standardShippingFee: Must be a non-negative number.");
+      }
+      this.policyConfig.standardShippingFee = newConfig.standardShippingFee;
+    }
+    if (newConfig.standardCommissionRate !== undefined) {
+      if (typeof newConfig.standardCommissionRate !== "number" || newConfig.standardCommissionRate < 0 || newConfig.standardCommissionRate > 1) {
+        throw new Error("Invalid standardCommissionRate: Must be between 0 and 1.");
+      }
+      this.policyConfig.standardCommissionRate = newConfig.standardCommissionRate;
+    }
+    return { ...this.policyConfig };
   }
 
   public async findProductById(id: string): Promise<ProductRecord | null> {
@@ -453,12 +1102,15 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
 
   public async listApprovedProducts(filter?: {
     categoryId?: string;
+    subcategoryId?: string;
+    audience?: string;
     occasion?: string;
     fabric?: string;
     searchQuery?: string;
     minPrice?: number;
     maxPrice?: number;
     sortBy?: "price_asc" | "price_desc" | "newest";
+    sellerId?: string;
   }): Promise<{ product: ProductRecord; variants: ProductVariantRecord[]; sellerStoreName: string }[]> {
     const list: { product: ProductRecord; variants: ProductVariantRecord[]; sellerStoreName: string }[] = [];
 
@@ -467,7 +1119,31 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
         continue;
       }
 
-      if (filter?.categoryId && prod.categoryId !== filter.categoryId) continue;
+      if (filter?.categoryId) {
+        let catMatches = prod.categoryId === filter.categoryId;
+        if (!catMatches) {
+          const cat = this.categories.get(prod.categoryId);
+          if (cat && (cat.slug === filter.categoryId || cat.id === filter.categoryId)) {
+            catMatches = true;
+          }
+        }
+        if (!catMatches) continue;
+      }
+      if (filter?.subcategoryId) {
+        let subMatches = prod.subcategoryId === filter.subcategoryId;
+        if (!subMatches && prod.subcategoryId) {
+          for (const cat of this.categories.values()) {
+            const sub = (cat.subcategories || []).find((s) => s.id === prod.subcategoryId);
+            if (sub && (sub.slug === filter.subcategoryId || sub.id === filter.subcategoryId)) {
+              subMatches = true;
+              break;
+            }
+          }
+        }
+        if (!subMatches) continue;
+      }
+      if (filter?.audience && prod.audience && prod.audience.toLowerCase() !== filter.audience.toLowerCase()) continue;
+      if (filter?.sellerId && prod.sellerId !== filter.sellerId) continue;
       if (filter?.occasion && prod.occasion.toLowerCase() !== filter.occasion.toLowerCase()) continue;
       if (filter?.fabric && prod.fabricMaterial.toLowerCase() !== filter.fabric.toLowerCase()) continue;
 
@@ -482,6 +1158,14 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
       const prodVariants = this.findVariantsByProductId(prod.id);
       if (prodVariants.length === 0) continue;
 
+      // Requirement 2: Exclude products when out of stock
+      const totalStock = prodVariants.reduce((sum, v) => sum + v.availableStock, 0);
+      if (totalStock <= 0) continue;
+
+      // Requirement 2: Exclude products if their category has been deactivated
+      const category = this.categories.get(prod.categoryId);
+      if (category && category.isActive === false) continue;
+
       // Price filtering
       if (filter?.minPrice !== undefined || filter?.maxPrice !== undefined) {
         const hasVariantInPriceRange = prodVariants.some((v) => {
@@ -493,7 +1177,7 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
       }
 
       const seller = this.sellerProfiles.get(prod.sellerId);
-      const sellerStoreName = seller?.storeName || "Vespera Verified Boutique";
+      const sellerStoreName = seller?.storeName || "ICM Verified Artisan Guild";
 
       list.push({ product: { ...prod }, variants: prodVariants, sellerStoreName });
     }
@@ -553,11 +1237,22 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
     v.availableStock = availableStock;
   }
 
+  public async updateProductActiveStatus(productId: string, isActive: boolean): Promise<void> {
+    const prod = this.products.get(productId);
+    if (!prod) throw new Error("Product not found.");
+    prod.isActive = isActive;
+    prod.updatedAt = new Date();
+  }
+
   // ------------------- CART REPRICING ENGINE -------------------
   public async repriceCart(rawItems: { variantId: string; quantity: number }[]): Promise<RepricedCart> {
     const repricedItems: RepricedCartItem[] = [];
     const validationErrors: string[] = [];
     let subtotal = 0;
+    let totalTaxAmount = 0;
+
+    // Track shipping by seller
+    const sellerShippingGroups = new Map<string, { method: ShippingMethod; charge: number; itemsSubtotal: number }>();
 
     for (const item of rawItems) {
       const variant = this.variants.get(item.variantId);
@@ -572,6 +1267,30 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
         continue;
       }
 
+      // Authoritative Tax Configuration Check
+      if (
+        product.taxVerificationStatus !== TaxVerificationStatus.APPROVED ||
+        !product.approvedTaxConfig
+      ) {
+        validationErrors.push(
+          `Product '${product.title}' has no approved active tax configuration and is temporarily restricted from checkout.`
+        );
+      } else if (
+        product.approvedTaxConfig.effectiveFrom &&
+        new Date() < new Date(product.approvedTaxConfig.effectiveFrom)
+      ) {
+        validationErrors.push(
+          `Tax configuration for '${product.title}' is not yet effective (starts ${new Date(product.approvedTaxConfig.effectiveFrom).toISOString().split('T')[0]}). Checkout is restricted.`
+        );
+      } else if (
+        product.approvedTaxConfig.effectiveTo &&
+        new Date() > new Date(product.approvedTaxConfig.effectiveTo)
+      ) {
+        validationErrors.push(
+          `Tax configuration for '${product.title}' has expired. Administrator review required.`
+        );
+      }
+
       const seller = this.sellerProfiles.get(product.sellerId);
       const isStockSufficient = variant.availableStock >= item.quantity;
 
@@ -581,6 +1300,29 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
 
       const lineTotal = variant.price * item.quantity;
       subtotal += lineTotal;
+
+      // Authoritative Item Tax Calculation
+      const appliedTaxRate = product.approvedTaxConfig ? product.approvedTaxConfig.approvedGstRate : 0;
+      const itemTaxAmount = Math.round(lineTotal * appliedTaxRate);
+      totalTaxAmount += itemTaxAmount;
+
+      // Shipping track
+      const shippingMethod = product.shippingMethod || ShippingMethod.PLATFORM_STANDARD;
+      const sellerDeliveryCharge = product.sellerDeliveryCharge || 0;
+
+      if (!sellerShippingGroups.has(product.sellerId)) {
+        sellerShippingGroups.set(product.sellerId, {
+          method: shippingMethod,
+          charge: sellerDeliveryCharge,
+          itemsSubtotal: lineTotal,
+        });
+      } else {
+        const group = sellerShippingGroups.get(product.sellerId)!;
+        group.itemsSubtotal += lineTotal;
+        if (shippingMethod === ShippingMethod.SELLER_MANAGED && sellerDeliveryCharge > group.charge) {
+          group.charge = sellerDeliveryCharge;
+        }
+      }
 
       repricedItems.push({
         variantId: variant.id,
@@ -596,18 +1338,47 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
         lineTotal,
         inStock: isStockSufficient,
         availableStock: variant.availableStock,
-        imageUrl: product.images[0] || undefined,
+        imageUrl: product.images?.[0] || undefined,
+        hsnCode: product.approvedTaxConfig?.hsnCode || product.proposedHsn || undefined,
+        appliedGstRate: appliedTaxRate,
+        itemTaxAmount,
+        shippingMethod,
+        sellerDeliveryCharge,
       });
     }
 
-    const taxAmount = Math.round(subtotal * 0.05); // Standard 5% Apparel GST
-    const shippingFee = subtotal > 2999 ? 0 : 250; // Free luxury delivery over ₹2,999
-    const totalAmount = subtotal + taxAmount + shippingFee;
+    // Shipping Fee Calculation (supporting mixed shipping modes)
+    let sellerManagedShippingFee = 0;
+    let standardItemsSubtotal = 0;
+    let hasStandardItems = false;
+
+    for (const item of repricedItems) {
+      if (item.shippingMethod === ShippingMethod.PLATFORM_STANDARD) {
+        standardItemsSubtotal += item.lineTotal;
+        hasStandardItems = true;
+      }
+    }
+
+    for (const [, group] of sellerShippingGroups.entries()) {
+      if (group.method === ShippingMethod.SELLER_MANAGED && group.charge > 0) {
+        sellerManagedShippingFee += group.charge;
+      }
+    }
+
+    let platformShippingFee = 0;
+    if (hasStandardItems) {
+      platformShippingFee = standardItemsSubtotal >= this.policyConfig.freeShippingThreshold
+        ? 0
+        : this.policyConfig.standardShippingFee;
+    }
+
+    const shippingFee = sellerManagedShippingFee + platformShippingFee;
+    const totalAmount = subtotal + totalTaxAmount + shippingFee;
 
     return {
       items: repricedItems,
       subtotal,
-      taxAmount,
+      taxAmount: totalTaxAmount,
       shippingFee,
       totalAmount,
       currency: "INR",
@@ -621,7 +1392,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
     customerId: string,
     customerEmail: string,
     rawItems: { variantId: string; quantity: number }[],
-    shippingAddress: OrderAddress
+    shippingAddress: OrderAddress,
+    initialPaymentStatus: OrderPaymentStatus = OrderPaymentStatus.PAID
   ): Promise<CustomerOrderRecord> {
     // 1. Authoritative Repricing & Stock Verification
     const repriced = await this.repriceCart(rawItems);
@@ -636,7 +1408,9 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
         throw new Error(`Inventory race: Variant '${v.sku}' ran out of stock.`);
       }
       v.availableStock -= item.quantity;
-      v.reservedStock += item.quantity;
+      if (initialPaymentStatus === OrderPaymentStatus.PENDING) {
+        v.reservedStock += item.quantity;
+      }
     }
 
     const parentOrderId = crypto.randomUUID();
@@ -657,9 +1431,16 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
       const subOrderId = crypto.randomUUID();
       const subOrderNumber = `${orderNumber}-S${subOrderIndex++}`;
       const subtotal = items.reduce((sum, it) => sum + it.lineTotal, 0);
-      const commissionRate = 0.12; // 12% standard fashion platform commission
+      const subOrderTax = items.reduce((sum, it) => sum + (it.itemTaxAmount || 0), 0);
+      const isSellerManaged = items.some((it) => it.shippingMethod === ShippingMethod.SELLER_MANAGED);
+      const subOrderShipping = isSellerManaged
+        ? Math.max(...items.map((it) => it.sellerDeliveryCharge || 0))
+        : (repriced.shippingFee > 0 ? Math.round(repriced.shippingFee / sellerGroups.size) : 0);
+
+      const commissionRate = this.policyConfig.standardCommissionRate; // Configurable platform commission rate
       const commissionAmount = Math.round(subtotal * commissionRate);
-      const netSellerAmount = subtotal - commissionAmount;
+      const shippingReimbursement = isSellerManaged ? subOrderShipping : 0;
+      const netSellerAmount = subtotal - commissionAmount + shippingReimbursement;
 
       const orderItems: OrderItemRecord[] = items.map((it) => ({
         id: crypto.randomUUID(),
@@ -672,6 +1453,9 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
         unitPrice: it.unitPrice,
         quantity: it.quantity,
         lineTotal: it.lineTotal,
+        hsnCode: it.hsnCode,
+        gstRate: it.appliedGstRate,
+        taxAmount: it.itemTaxAmount,
       }));
 
       const seller = this.sellerProfiles.get(sellerId);
@@ -683,6 +1467,8 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
         sellerStoreName: seller?.storeName || "Atelier Merchant",
         subOrderNumber,
         subtotal,
+        taxAmount: subOrderTax,
+        shippingFee: subOrderShipping,
         commissionRate,
         commissionAmount,
         netSellerAmount,
@@ -697,18 +1483,20 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
       this.subOrders.set(subOrderId, subOrder);
       subOrdersList.push(subOrder);
 
-      // Record accrual in seller settlement ledger
-      await this.recordLedgerEntry({
-        id: crypto.randomUUID(),
-        sellerId,
-        subOrderId,
-        entryType: LedgerEntryType.SALE_CREDIT,
-        amount: netSellerAmount,
-        balanceAfter: (await this.getSellerBalance(sellerId)) + netSellerAmount,
-        referenceNote: `Order ${subOrderNumber} placed (Gross: ₹${subtotal}, Fee: ₹${commissionAmount})`,
-        status: LedgerStatus.ACCRUED,
-        createdAt: new Date(),
-      });
+      // Record accrual in seller settlement ledger only if payment is confirmed
+      if (initialPaymentStatus === OrderPaymentStatus.PAID) {
+        await this.recordLedgerEntry({
+          id: crypto.randomUUID(),
+          sellerId,
+          subOrderId,
+          entryType: LedgerEntryType.SALE_CREDIT,
+          amount: netSellerAmount,
+          balanceAfter: (await this.getSellerBalance(sellerId)) + netSellerAmount,
+          referenceNote: `Net settlement for order ${subOrderNumber} (Subtotal ₹${subtotal} - ${commissionRate * 100}% commission ₹${commissionAmount})`,
+          status: LedgerStatus.ACCRUED,
+          createdAt: new Date(),
+        });
+      }
     }
 
     const customerOrder: CustomerOrderRecord = {
@@ -719,7 +1507,7 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
       totalAmount: repriced.totalAmount,
       taxAmount: repriced.taxAmount,
       shippingFee: repriced.shippingFee,
-      paymentStatus: OrderPaymentStatus.PAID, // Simulated sandbox authorization
+      paymentStatus: initialPaymentStatus,
       shippingAddress,
       subOrders: subOrdersList,
       createdAt: new Date(),
@@ -728,6 +1516,139 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
 
     this.orders.set(parentOrderId, customerOrder);
     return customerOrder;
+  }
+
+  public async confirmOrderPayment(
+    orderIdOrNumber: string,
+    transactionRef: string,
+    provider: string = "paytm",
+    paymentDetails?: any
+  ): Promise<{ order: CustomerOrderRecord; isDuplicate: boolean }> {
+    let order = this.orders.get(orderIdOrNumber);
+    if (!order) {
+      for (const o of this.orders.values()) {
+        if (o.orderNumber === orderIdOrNumber) {
+          order = o;
+          break;
+        }
+      }
+    }
+
+    if (!order) {
+      throw new Error(`Order not found for reference: ${orderIdOrNumber}`);
+    }
+
+    // Idempotent duplicate protection
+    if (order.paymentStatus === OrderPaymentStatus.PAID) {
+      return { order: { ...order }, isDuplicate: true };
+    }
+
+    order.paymentStatus = OrderPaymentStatus.PAID;
+    order.updatedAt = new Date();
+
+    // 1. Commit inventory (release reserved hold)
+    for (const sub of order.subOrders) {
+      for (const item of sub.items) {
+        const v = this.variants.get(item.variantId);
+        if (v && v.reservedStock >= item.quantity) {
+          v.reservedStock -= item.quantity;
+        }
+      }
+    }
+
+    // 2. Accrue seller settlements
+    for (const sub of order.subOrders) {
+      await this.recordLedgerEntry({
+        id: crypto.randomUUID(),
+        sellerId: sub.sellerId,
+        subOrderId: sub.id,
+        entryType: LedgerEntryType.SALE_CREDIT,
+        amount: sub.netSellerAmount,
+        balanceAfter: (await this.getSellerBalance(sub.sellerId)) + sub.netSellerAmount,
+        referenceNote: `Net settlement for verified order ${sub.subOrderNumber} (Subtotal ₹${sub.subtotal} - ${sub.commissionRate * 100}% commission ₹${sub.commissionAmount})`,
+        status: LedgerStatus.ACCRUED,
+        createdAt: new Date(),
+      });
+    }
+
+    // 3. Record verified payment transaction
+    const txnRecord: PaymentTransactionRecord = {
+      id: crypto.randomUUID(),
+      orderId: order.id,
+      paymentProvider: provider,
+      transactionReference: transactionRef,
+      amount: order.totalAmount,
+      currency: "INR",
+      status: OrderPaymentStatus.PAID,
+      webhookSignature: paymentDetails?.signature || null,
+      isReconciled: true,
+      createdAt: new Date(),
+    };
+    this.paymentTransactions.set(txnRecord.id, txnRecord);
+
+    this.orders.set(order.id, order);
+    return { order: { ...order }, isDuplicate: false };
+  }
+
+  public async failOrderPayment(
+    orderIdOrNumber: string,
+    reason: string
+  ): Promise<CustomerOrderRecord> {
+    let order = this.orders.get(orderIdOrNumber);
+    if (!order) {
+      for (const o of this.orders.values()) {
+        if (o.orderNumber === orderIdOrNumber) {
+          order = o;
+          break;
+        }
+      }
+    }
+
+    if (!order) {
+      throw new Error(`Order not found for reference: ${orderIdOrNumber}`);
+    }
+
+    if (order.paymentStatus === OrderPaymentStatus.PAID) {
+      return { ...order }; // Cannot fail a paid order
+    }
+
+    order.paymentStatus = OrderPaymentStatus.FAILED;
+    order.updatedAt = new Date();
+
+    // Release reserved inventory back to available
+    for (const sub of order.subOrders) {
+      for (const item of sub.items) {
+        const v = this.variants.get(item.variantId);
+        if (v) {
+          v.availableStock += item.quantity;
+          if (v.reservedStock >= item.quantity) {
+            v.reservedStock -= item.quantity;
+          }
+        }
+      }
+    }
+
+    this.orders.set(order.id, order);
+    return { ...order };
+  }
+
+  public async findOrderByOrderNumber(orderNumber: string): Promise<CustomerOrderRecord | null> {
+    for (const o of this.orders.values()) {
+      if (o.orderNumber === orderNumber) {
+        return { ...o };
+      }
+    }
+    return null;
+  }
+
+  public async listPaymentTransactions(orderId?: string): Promise<PaymentTransactionRecord[]> {
+    const list: PaymentTransactionRecord[] = [];
+    for (const txn of this.paymentTransactions.values()) {
+      if (!orderId || txn.orderId === orderId) {
+        list.push({ ...txn });
+      }
+    }
+    return list.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
   public async findCustomerOrderById(orderId: string): Promise<CustomerOrderRecord | null> {
@@ -774,6 +1695,78 @@ export class FoundationRepository implements ISessionRepository, IAuditRepositor
     if (status === FulfilmentStatus.DISPATCHED) sub.dispatchedAt = new Date();
     if (status === FulfilmentStatus.DELIVERED) sub.deliveredAt = new Date();
     sub.updatedAt = new Date();
+  }
+
+  public async cancelSubOrder(
+    subOrderId: string,
+    reason: string
+  ): Promise<FulfilmentSubOrderRecord> {
+    const sub = this.subOrders.get(subOrderId);
+    if (!sub) throw new Error("Sub-order not found.");
+    if (sub.status === FulfilmentStatus.CANCELLED) {
+      throw new Error("Sub-order is already cancelled.");
+    }
+    if (sub.status === FulfilmentStatus.DELIVERED) {
+      throw new Error("Delivered sub-orders cannot be directly cancelled. Returns process must be initiated.");
+    }
+
+    sub.status = FulfilmentStatus.CANCELLED;
+    sub.updatedAt = new Date();
+
+    // 1. Restore reserved/available inventory
+    for (const item of sub.items) {
+      const v = this.variants.get(item.variantId);
+      if (v) {
+        v.availableStock += item.quantity;
+        if (v.reservedStock >= item.quantity) {
+          v.reservedStock -= item.quantity;
+        }
+      }
+    }
+
+    // 2. Reverse seller accrual in settlement ledger
+    const balanceBefore = await this.getSellerBalance(sub.sellerId);
+    await this.recordLedgerEntry({
+      id: crypto.randomUUID(),
+      sellerId: sub.sellerId,
+      subOrderId,
+      entryType: LedgerEntryType.RETURN_DEBIT,
+      amount: sub.netSellerAmount,
+      balanceAfter: balanceBefore - sub.netSellerAmount,
+      referenceNote: `Cancellation & reversal for sub-order ${sub.subOrderNumber}. Reason: ${reason}`,
+      status: LedgerStatus.SETTLED,
+      createdAt: new Date(),
+    });
+
+    return { ...sub };
+  }
+
+  public async disburseSellerPayout(
+    sellerId: string,
+    amount: number,
+    adminUserId: string,
+    bankReference: string
+  ): Promise<SettlementLedgerRecord> {
+    const currentBalance = await this.getSellerBalance(sellerId);
+    if (amount <= 0) throw new Error("Payout amount must be a positive number.");
+    if (amount > currentBalance) {
+      throw new Error(`Insufficient accrued balance (₹${currentBalance}) for requested payout of ₹${amount}.`);
+    }
+
+    const entry: SettlementLedgerRecord = {
+      id: crypto.randomUUID(),
+      sellerId,
+      subOrderId: null,
+      entryType: LedgerEntryType.PAYOUT_DISBURSEMENT,
+      amount,
+      balanceAfter: currentBalance - amount,
+      referenceNote: `Verified bank payout disburse ref: ${bankReference}. Authorized by admin: ${adminUserId}`,
+      status: LedgerStatus.SETTLED,
+      createdAt: new Date(),
+    };
+
+    await this.recordLedgerEntry(entry);
+    return entry;
   }
 
   // ------------------- SETTLEMENT LEDGER -------------------

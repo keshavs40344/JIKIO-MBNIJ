@@ -8,6 +8,7 @@ import { SessionManager } from "../src/auth/session-manager.js";
 import { PasswordService } from "../src/auth/password.service.js";
 import { SafeStorageService, LocalProtectedStorageProvider } from "../src/storage/storage.service.js";
 import { AuditLogger } from "../src/audit/audit-logger.js";
+import { MfaService } from "../src/auth/mfa.service.js";
 import { DocumentType, UserRole, VerificationStatus } from "../src/types/auth.js";
 
 describe("Phase 3 HTTP API Endpoints & Security Integration Tests", () => {
@@ -231,6 +232,7 @@ describe("Phase 3 HTTP API Endpoints & Security Integration Tests", () => {
   it("POST /api/v1/auth/admin/login enforces mandatory MFA challenge", async () => {
     const adminPassword = "SuperAdminPassword2026!#";
     const passwordHash = await PasswordService.hash(adminPassword);
+    const mfaSecret = MfaService.generateTotpSecret();
 
     await repo.createUser({
       id: "admin_mfa_user",
@@ -239,6 +241,7 @@ describe("Phase 3 HTTP API Endpoints & Security Integration Tests", () => {
       role: UserRole.SUPER_ADMIN,
       isActive: true,
       isMfaEnabled: true,
+      mfaSecret,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -249,10 +252,11 @@ describe("Phase 3 HTTP API Endpoints & Security Integration Tests", () => {
       .send({ email: "owner@vespera.local", password: adminPassword, totpCode: "000000" });
     expect(failRes.status).toBe(401);
 
-    // 2. Valid TOTP code (849201 verified test code) succeeds
+    // 2. Real RFC 6238 TOTP computation succeeds
+    const realTotpCode = MfaService.generateCurrentTotp(mfaSecret);
     const successRes = await request(app)
       .post("/api/v1/auth/admin/login")
-      .send({ email: "owner@vespera.local", password: adminPassword, totpCode: "849201" });
+      .send({ email: "owner@vespera.local", password: adminPassword, totpCode: realTotpCode });
     expect(successRes.status).toBe(200);
     expect(successRes.body.data.accessToken).toBeDefined();
     expect(successRes.body.data.user.role).toBe(UserRole.SUPER_ADMIN);

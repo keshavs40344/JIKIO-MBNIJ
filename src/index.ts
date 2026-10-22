@@ -1,7 +1,10 @@
 import { createApp } from "./server/app.js";
+import { FoundationRepository } from "./database/repository.js";
 
 const PORT = process.env.PORT || 3000;
-const app = createApp();
+const repo = new FoundationRepository();
+repo.seedDemoUsers();
+const app = createApp({ repo });
 
 app.listen(PORT, () => {
   console.log(`================================================================`);

@@ -32,6 +32,7 @@ export interface UserRecord {
   role: UserRole;
   isActive: boolean;
   isMfaEnabled: boolean;
+  mfaSecret?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
