@@ -3,573 +3,2611 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vespera Atelier — Haute Couture & Ready-to-Wear Multi-Vendor Marketplace</title>
+  <title>ICM Madhubani — Ishani Collection Mithila | Handcrafted Luxury & Royal Bespoke Couture</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/app.css">
 </head>
 <body>
 
-  <!-- Top Announcement Bar -->
-  <div class="top-announcement">
-    Complimentary White-Glove Atelier Delivery on Orders Over ₹2,999 • Handcrafted Luxury Couture
+  <!-- Top Utility Strip (Desktop only, minimal 26px height) -->
+  <div class="utility-strip desktop-only">
+    <div class="utility-container">
+      <div class="utility-left">
+        <span>Handcrafted Indian Luxury Marketplace • Direct Master Artisan Looms</span>
+      </div>
+      <div class="utility-right">
+        <a href="/brands" class="utility-link">Artisan Guilds (<span class="guilds-live-count">3</span>)</a>
+        <span class="utility-dot">•</span>
+        <a href="/account/orders" class="utility-link">Track Order</a>
+        <span class="utility-dot">•</span>
+        <a href="/seller/onboarding" class="utility-link">Artisan Guild Application</a>
+      </div>
+    </div>
   </div>
 
-  <!-- Main Site Header -->
-  <header class="site-header">
-    <div class="header-inner">
-      <div class="header-left">
-        <a class="logo-container" onclick="switchView('storefront')">
-          <h1 class="brand-title">VESPERA ATELIER</h1>
-          <span class="logo-sub">HAUTE COUTURE & READY-TO-WEAR</span>
-        </a>
-      </div>
+  <!-- Admin/Seller Top Notice Bar (Shown only when in internal portal view) -->
+  <div id="internal-portal-notice" class="admin-banner-notice" style="display: none;">
+    <span id="portal-notice-text">Internal Portal Active</span>
+    <button class="btn btn-outline-white btn-sm" onclick="navigateTo('/')">Return to Storefront</button>
+  </div>
 
-      <nav>
-        <ul class="nav-links">
-          <li><a class="nav-link" onclick="filterByCategory('')">All Heirlooms</a></li>
-          <li><a class="nav-link" onclick="filterByCategory('cat_ethnic')">Ethnic Wear</a></li>
-          <li><a class="nav-link" onclick="filterByCategory('cat_wedding')">Wedding & Festive</a></li>
-          <li><a class="nav-link" onclick="filterByCategory('cat_women')">Women</a></li>
-          <li><a class="nav-link" onclick="filterByCategory('cat_men')">Men</a></li>
-          <li><a class="nav-link" onclick="filterByCategory('cat_footwear')">Footwear</a></li>
-          <li><a class="nav-link" onclick="filterByCategory('cat_accessories')">Accessories</a></li>
+  <!-- Main Unified Site Header (Sticky, 76px Desktop, 52px Mobile) -->
+  <header class="site-header" id="site-header" role="banner">
+    <div class="header-main-row">
+      <!-- Mobile Menu Button (Mobile only, 48x48 tap target) -->
+      <button class="mobile-menu-toggle mobile-only" id="mobile-menu-toggle" onclick="toggleMobileNav(true)" aria-label="Open Navigation Menu" aria-expanded="false" aria-controls="mobile-drawer">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+      <!-- Brand Logo Wordmark -->
+      <a href="/" class="brand-link" aria-label="ICM Madhubani Marketplace Homepage">
+        <span class="brand-main">ICM MADHUBANI</span>
+        <span class="brand-sub desktop-only">Craft &amp; Royal Couture</span>
+      </a>
+
+      <!-- Desktop Primary Department Navigation (with accessible mega-menus) -->
+      <nav class="primary-nav desktop-only" id="primary-nav" aria-label="Marketplace Departments">
+        <ul class="nav-menu-list">
+          <!-- WOMEN -->
+          <li class="nav-item has-megamenu">
+            <a href="/women" class="nav-link" aria-haspopup="true" aria-expanded="false">
+              <span>WOMEN</span>
+              <svg class="chevron-down" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l4 4 4-4"></path></svg>
+            </a>
+            <div class="megamenu-panel" role="region" aria-label="Women's Couture Menu">
+              <div class="megamenu-grid">
+                <div class="megamenu-col">
+                  <span class="megamenu-col-title">By Category</span>
+                  <ul class="megamenu-links">
+                    <li><a href="/category/cat_ethnic">Sarees &amp; Handlooms (<span class="count-cat_ethnic">2</span>)</a></li>
+                    <li><a href="/category/cat_women">Angrakhas &amp; Separates (<span class="count-cat_women">1</span>)</a></li>
+                    <li><a href="/category/cat_wedding">Bridal Lehengas (<span class="count-cat_wedding">1</span>)</a></li>
+                    <li><a href="/category/cat_accessories">Handpainted Stoles &amp; Potlis (<span class="count-cat_accessories">1</span>)</a></li>
+                    <li><a href="/women" class="megamenu-view-all">All Women's Couture →</a></li>
+                  </ul>
+                </div>
+                <div class="megamenu-col">
+                  <span class="megamenu-col-title">By Occasion</span>
+                  <ul class="megamenu-links">
+                    <li><a href="/occasion/wedding">Royal Wedding</a></li>
+                    <li><a href="/occasion/festive">Festive Ceremonies</a></li>
+                    <li><a href="/shop?fabric=Pure+Silk">Handspun Tussar &amp; Katan</a></li>
+                  </ul>
+                </div>
+                <div class="megamenu-col megamenu-featured">
+                  <span class="megamenu-col-title">Featured Guild</span>
+                  <div class="megamenu-guild-card">
+                    <span class="megamenu-guild-name">Banaras Heritage Silks</span>
+                    <span class="megamenu-guild-meta">Varanasi Pit-Looms • Pure Katan Weaves</span>
+                    <a href="/seller/seller_banaras_heritage" class="megamenu-guild-link">View Atelier Profile →</a>
+                  </div>
+                </div>
+                <div class="megamenu-col megamenu-campaign">
+                  <div class="megamenu-campaign-card">
+                    <img src="/assets/campaigns/campaign-sarees.jpg" alt="Signature Sarees" loading="lazy">
+                    <div class="megamenu-campaign-caption">
+                      <span>THE ANCESTRAL LOOMS</span>
+                      <a href="/category/cat_ethnic">Explore Handlooms →</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!-- MEN -->
+          <li class="nav-item has-megamenu">
+            <a href="/men" class="nav-link" aria-haspopup="true" aria-expanded="false">
+              <span>MEN</span>
+              <svg class="chevron-down" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l4 4 4-4"></path></svg>
+            </a>
+            <div class="megamenu-panel" role="region" aria-label="Men's Couture Menu">
+              <div class="megamenu-grid">
+                <div class="megamenu-col">
+                  <span class="megamenu-col-title">Bespoke Silhouettes</span>
+                  <ul class="megamenu-links">
+                    <li><a href="/category/cat_men">Royal Bandhgalas (<span class="count-cat_men">1</span>)</a></li>
+                    <li><a href="/category/cat_footwear">Zardozi Mojaris (<span class="count-cat_footwear">1</span>)</a></li>
+                    <li><a href="/men" class="megamenu-view-all">All Men's Couture →</a></li>
+                  </ul>
+                </div>
+                <div class="megamenu-col">
+                  <span class="megamenu-col-title">By Occasion</span>
+                  <ul class="megamenu-links">
+                    <li><a href="/occasion/wedding">Groom &amp; Wedding Entourage</a></li>
+                    <li><a href="/occasion/festive">Royal Festive Durbar</a></li>
+                  </ul>
+                </div>
+                <div class="megamenu-col megamenu-featured">
+                  <span class="megamenu-col-title">Master Atelier</span>
+                  <div class="megamenu-guild-card">
+                    <span class="megamenu-guild-name">Jaipur Royal Weaves</span>
+                    <span class="megamenu-guild-meta">Bespoke Tailoring • Wild Tussar</span>
+                    <a href="/seller/seller_jaipur_royal" class="megamenu-guild-link">View Atelier Profile →</a>
+                  </div>
+                </div>
+                <div class="megamenu-col megamenu-campaign">
+                  <div class="megamenu-campaign-card">
+                    <img src="/assets/campaigns/campaign-menswear.jpg" alt="Men's Couture" loading="lazy">
+                    <div class="megamenu-campaign-caption">
+                      <span>THE ROYAL ATELIER</span>
+                      <a href="/men">Explore Menswear →</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!-- KIDS -->
+          <li class="nav-item">
+            <a href="/kids" class="nav-link"><span>KIDS</span></a>
+          </li>
+
+          <!-- BRIDAL & FESTIVE -->
+          <li class="nav-item has-megamenu">
+            <a href="/occasion/wedding" class="nav-link" aria-haspopup="true" aria-expanded="false">
+              <span>BRIDAL &amp; FESTIVE</span>
+              <svg class="chevron-down" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l4 4 4-4"></path></svg>
+            </a>
+            <div class="megamenu-panel" role="region" aria-label="Bridal Menu">
+              <div class="megamenu-grid">
+                <div class="megamenu-col">
+                  <span class="megamenu-col-title">Wedding Heirlooms</span>
+                  <ul class="megamenu-links">
+                    <li><a href="/category/cat_wedding">Bridal Lehengas (<span class="count-cat_wedding">1</span>)</a></li>
+                    <li><a href="/category/cat_ethnic">Katan Silk Wedding Sarees (<span class="count-cat_ethnic">2</span>)</a></li>
+                    <li><a href="/category/cat_royal_jewelry">Imperial Jadau &amp; Polki (<span class="count-cat_royal_jewelry">1</span>)</a></li>
+                    <li><a href="/occasion/wedding" class="megamenu-view-all">All Wedding Collections →</a></li>
+                  </ul>
+                </div>
+                <div class="megamenu-col megamenu-campaign">
+                  <div class="megamenu-campaign-card">
+                    <img src="/assets/campaigns/campaign-bridal.jpg" alt="Bridal Edit" loading="lazy">
+                    <div class="megamenu-campaign-caption">
+                      <span>CEREMONIAL SPLENDOR</span>
+                      <a href="/occasion/wedding">The Wedding Edit →</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <!-- SAREES & HANDLOOMS -->
+          <li class="nav-item">
+            <a href="/category/cat_ethnic" class="nav-link"><span>SAREES</span></a>
+          </li>
+
+          <!-- FOOTWEAR -->
+          <li class="nav-item">
+            <a href="/category/cat_footwear" class="nav-link"><span>FOOTWEAR</span></a>
+          </li>
+
+          <!-- ARTISAN GUILDS -->
+          <li class="nav-item">
+            <a href="/brands" class="nav-link"><span>ARTISAN GUILDS</span></a>
+          </li>
         </ul>
       </nav>
 
-      <div class="header-right">
-        <!-- Portal Selector -->
-        <button class="portal-badge current" id="badge-storefront" onclick="switchView('storefront')">Customer Store</button>
-        <button class="portal-badge" id="badge-seller" onclick="switchView('seller')">Seller Workspace</button>
-        <button class="portal-badge" id="badge-admin" onclick="switchView('admin')">Platform Owner</button>
-
-        <button class="btn btn-outline btn-sm" onclick="openCartDrawer()">
-          Bag (<span id="cart-count">0</span>)
+      <!-- Header Action Icons Cluster -->
+      <div class="header-right-actions">
+        <!-- Search Trigger Icon Button -->
+        <button type="button" class="action-btn search-trigger-btn" id="header-search-trigger" onclick="openSearchOverlay()" aria-label="Search Marketplace Catalog" title="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span class="action-text desktop-only">Search</span>
         </button>
+
+        <!-- Wishlist Link -->
+        <a href="/wishlist" class="action-btn" id="header-wishlist-btn" aria-label="Saved Wishlist" title="Saved Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <span class="action-badge" id="wishlist-badge" style="display: none;">0</span>
+          <span class="action-text desktop-only">Wishlist</span>
+        </a>
+
+        <!-- Shopping Bag Link -->
+        <a href="/cart" class="action-btn" id="header-cart-btn" aria-label="Shopping Bag" title="Shopping Bag">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span class="action-badge" id="cart-badge" style="display: none;">0</span>
+          <span class="action-badge mobile-only" id="cart-badge-mobile" style="display: none;">0</span>
+          <span class="action-text desktop-only">Bag</span>
+        </a>
+
+        <!-- Patron Account Link -->
+        <a href="/account" class="action-btn desktop-only" id="header-account-btn" aria-label="Patron Account" title="Patron Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span class="action-text">Account</span>
+        </a>
       </div>
     </div>
   </header>
 
+  <!-- Search Overlay (Accessible, Debounced Live Product Suggestions, Curated Searches) -->
+  <div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true" aria-label="Marketplace Product Search">
+    <div class="search-overlay-backdrop" onclick="closeSearchOverlay()"></div>
+    <div class="search-overlay-container">
+      <div class="search-overlay-header">
+        <form class="search-overlay-form" onsubmit="handleOverlaySearchSubmit(event)">
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="search" id="search-overlay-input" placeholder="Search sarees, bandhgalas, bridal lehengas, mojaris, guilds..." aria-label="Search sarees, bandhgalas, bridal lehengas, mojaris, guilds" autocomplete="off" oninput="handleSearchOverlayInput(event)">
+            <button type="submit" class="search-overlay-submit-btn desktop-only">Search</button>
+          </div>
+        </form>
+        <button type="button" class="search-overlay-close-btn" id="search-overlay-close" onclick="closeSearchOverlay()" aria-label="Close Search (Escape)">✕</button>
+      </div>
+
+      <div class="search-overlay-body">
+        <!-- Curated Artisan Searches (Clearly Labelled as Curated) -->
+        <div class="search-curated-block" id="search-curated-block">
+          <span class="search-curated-title">Curated Artisan Searches</span>
+          <div class="search-curated-pills">
+            <button type="button" class="curated-pill" onclick="selectCuratedSearch('Tussar Silk')">Tussar Silk</button>
+            <button type="button" class="curated-pill" onclick="selectCuratedSearch('Katan Sari')">Katan Sari</button>
+            <button type="button" class="curated-pill" onclick="selectCuratedSearch('Bandhgala')">Royal Bandhgala</button>
+            <button type="button" class="curated-pill" onclick="selectCuratedSearch('Bridal Lehenga')">Bridal Lehenga</button>
+            <button type="button" class="curated-pill" onclick="selectCuratedSearch('Zardozi Mojari')">Zardozi Mojari</button>
+            <button type="button" class="curated-pill" onclick="selectCuratedSearch('Jadau Polki')">Jadau Polki</button>
+          </div>
+        </div>
+
+        <!-- Live Instant Suggestions Container -->
+        <div class="search-live-results" id="search-live-results" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Drawer & Backdrop (Accessible, Scroll-Locked, Focus-Trapped) -->
+  <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop" onclick="toggleMobileNav(false)"></div>
+  <aside class="mobile-drawer" id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation Menu">
+    <div class="mobile-drawer-header">
+      <div class="drawer-brand">
+        <span class="brand-main">ICM MADHUBANI</span>
+        <span class="brand-sub">Craft &amp; Royal Couture</span>
+      </div>
+      <button type="button" class="btn-close-drawer" id="btn-close-drawer" onclick="toggleMobileNav(false)" aria-label="Close Navigation Menu (Escape)">✕</button>
+    </div>
+
+    <!-- Mobile Drawer Search Bar -->
+    <div class="drawer-search-bar">
+      <button type="button" class="drawer-search-trigger" onclick="openSearchOverlayFromDrawer()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Search marketplace creations...</span>
+      </button>
+    </div>
+
+    <div class="mobile-drawer-scrollable" id="mobile-drawer-scrollable">
+      <!-- Section A: Customer Shopping Departments -->
+      <div class="drawer-nav-section">
+        <span class="drawer-section-title">Shopping Departments</span>
+        <div class="drawer-accordion-group">
+          <!-- Women Accordion -->
+          <div class="drawer-accordion-item" id="drawer-acc-women">
+            <button type="button" class="drawer-accordion-btn drawer-accordion-header" onclick="toggleDrawerAccordion('drawer-acc-women')" aria-expanded="false">
+              <span>Women's Couture</span>
+              <svg class="chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l4 4 4-4"></path></svg>
+            </button>
+            <div class="drawer-accordion-content">
+              <a href="/women" onclick="toggleMobileNav(false)">All Women's Couture</a>
+              <a href="/category/cat_ethnic" onclick="toggleMobileNav(false)">Sarees &amp; Handlooms (<span class="count-cat_ethnic">2</span>)</a>
+              <a href="/category/cat_women" onclick="toggleMobileNav(false)">Angrakhas &amp; Separates (<span class="count-cat_women">1</span>)</a>
+              <a href="/category/cat_wedding" onclick="toggleMobileNav(false)">Bridal Lehengas (<span class="count-cat_wedding">1</span>)</a>
+              <a href="/category/cat_accessories" onclick="toggleMobileNav(false)">Handpainted Stoles (<span class="count-cat_accessories">1</span>)</a>
+            </div>
+          </div>
+
+          <!-- Men Accordion -->
+          <div class="drawer-accordion-item" id="drawer-acc-men">
+            <button type="button" class="drawer-accordion-btn drawer-accordion-header" onclick="toggleDrawerAccordion('drawer-acc-men')" aria-expanded="false">
+              <span>Men's Bespoke Couture</span>
+              <svg class="chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l4 4 4-4"></path></svg>
+            </button>
+            <div class="drawer-accordion-content">
+              <a href="/men" onclick="toggleMobileNav(false)">All Men's Couture</a>
+              <a href="/category/cat_men" onclick="toggleMobileNav(false)">Royal Bandhgalas (<span class="count-cat_men">1</span>)</a>
+              <a href="/category/cat_footwear" onclick="toggleMobileNav(false)">Zardozi Mojaris (<span class="count-cat_footwear">1</span>)</a>
+            </div>
+          </div>
+
+          <!-- Bridal Accordion -->
+          <div class="drawer-accordion-item" id="drawer-acc-bridal">
+            <button type="button" class="drawer-accordion-btn drawer-accordion-header" onclick="toggleDrawerAccordion('drawer-acc-bridal')" aria-expanded="false">
+              <span>Bridal &amp; Festive Heirlooms</span>
+              <svg class="chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l4 4 4-4"></path></svg>
+            </button>
+            <div class="drawer-accordion-content">
+              <a href="/occasion/wedding" onclick="toggleMobileNav(false)">The Royal Wedding Edit</a>
+              <a href="/category/cat_wedding" onclick="toggleMobileNav(false)">Mulberry Silk Lehengas (<span class="count-cat_wedding">1</span>)</a>
+              <a href="/category/cat_royal_jewelry" onclick="toggleMobileNav(false)">Imperial Jadau &amp; Polki (<span class="count-cat_royal_jewelry">1</span>)</a>
+            </div>
+          </div>
+
+          <!-- Direct Category Links -->
+          <a href="/category/cat_ethnic" class="drawer-direct-link" onclick="toggleMobileNav(false)">
+            <span>Sarees &amp; Handlooms</span>
+            <span class="drawer-badge count-cat_ethnic">2</span>
+          </a>
+          <a href="/category/cat_footwear" class="drawer-direct-link" onclick="toggleMobileNav(false)">
+            <span>Footwear &amp; Mojaris</span>
+            <span class="drawer-badge count-cat_footwear">1</span>
+          </a>
+          <a href="/category/cat_accessories" class="drawer-direct-link" onclick="toggleMobileNav(false)">
+            <span>Bags &amp; Accessories</span>
+            <span class="drawer-badge count-cat_accessories">1</span>
+          </a>
+          <a href="/category/cat_royal_jewelry" class="drawer-direct-link" onclick="toggleMobileNav(false)">
+            <span>Imperial Jewelry &amp; Heirlooms</span>
+            <span class="drawer-badge count-cat_royal_jewelry">1</span>
+          </a>
+          <!-- Kids' clothing: truthful (0) count -->
+          <a href="/kids" class="drawer-direct-link" onclick="toggleMobileNav(false)">
+            <span>Kids' Festive Clothing</span>
+            <span class="drawer-badge-upcoming">Upcoming (0)</span>
+          </a>
+          <a href="/brands" class="drawer-direct-link" onclick="toggleMobileNav(false)">
+            <span>Curated Master Guilds</span>
+            <span class="drawer-badge">3 Guilds</span>
+          </a>
+          <a href="/atelier" class="drawer-direct-link highlight-atelier" onclick="toggleMobileNav(false)">
+            <span>The Virtual Mithila Atelier ✨</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Section B: Patron Services -->
+      <div class="drawer-nav-section">
+        <span class="drawer-section-title">Patron Services</span>
+        <div class="drawer-links-stack">
+          <a href="/account" onclick="toggleMobileNav(false)">Patron Profile &amp; Dashboard</a>
+          <a href="/account/orders" onclick="toggleMobileNav(false)">Track Orders &amp; History</a>
+          <a href="/account/returns" onclick="toggleMobileNav(false)">Artisanal Exchanges &amp; Returns</a>
+          <a href="/wishlist" onclick="toggleMobileNav(false)">Saved Wishlist</a>
+          <a href="/cart" onclick="toggleMobileNav(false)">Shopping Bag</a>
+        </div>
+      </div>
+
+      <!-- Section C: Artisan Partner Portal (Discrete Demarcated Section) -->
+      <div class="drawer-nav-section drawer-partner-section">
+        <span class="drawer-section-title">Artisan Partner Portal</span>
+        <p class="drawer-partner-desc">For master weaving clusters and regional craft guilds</p>
+        <div class="drawer-links-stack">
+          <a href="/seller/onboarding" class="drawer-partner-link" onclick="toggleMobileNav(false)">Apply as Verified Artisan Guild →</a>
+          <a href="/seller/catalogue" class="drawer-subtle-link" onclick="toggleMobileNav(false)">Seller Atelier Workspace</a>
+        </div>
+      </div>
+
+      <!-- Section D: Platform Governance (Admin only - hidden from public customers, revealed only when authenticated) -->
+      <div class="drawer-nav-section drawer-admin-section" id="drawer-admin-section" style="display: none;">
+        <span class="drawer-section-title">Platform Governance</span>
+        <a href="/admin" class="drawer-subtle-link" onclick="toggleMobileNav(false)">Owner Administration Console →</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Global Toast Feedback -->
+  <div id="atelier-toast" class="atelier-toast" style="display: none;"></div>
+
   <!-- ========================================================================
-       VIEW 1: CUSTOMER STOREFRONT
+       PAGE VIEW 1: HOMEPAGE (/)
        ======================================================================== -->
-  <main id="view-storefront" class="portal-view active">
-    <!-- Editorial Hero -->
-    <section class="hero-editorial">
-      <p class="hero-subtitle">Autumn / Festive 2026 Collection</p>
-      <h2>The Bridal & Festive Heirlooms</h2>
-      <p class="hero-lead">Handcrafted Banarasi Katan silks, delicate Chanderi tissue weaves, and bespoke tailored Bandhgalas from India's master artisanal guilds.</p>
-      <button class="btn btn-accent" onclick="scrollToDiscovery()">Explore Collection</button>
+  <main id="view-home" class="page-view active">
+
+    <!-- Large Automatically Sliding Fashion Campaign Hero Carousel (Phase 1.2 Editorial Hero) -->
+    <section class="campaign-carousel" id="hero-campaign-carousel" aria-label="Featured Fashion Campaigns" role="region">
+      <div class="campaign-carousel__viewport">
+        <div class="campaign-carousel__track" id="campaign-carousel-track">
+
+          <!-- Slide 1: Signature Handloom Collection -->
+          <div class="campaign-slide active" data-slide-index="0" role="group" aria-roledescription="slide" aria-label="1 of 5: Signature Handloom Collection">
+            <div class="campaign-slide__backdrop">
+              <img src="/assets/campaigns/campaign-main-hero.jpg" alt="Signature Handloom Silks and Mithila Artistry" class="campaign-slide__img" loading="eager" fetchpriority="high" width="1920" height="960">
+              <div class="campaign-slide__overlay"></div>
+            </div>
+            <div class="campaign-slide__container">
+              <div class="campaign-slide__content">
+                <span class="campaign-slide__eyebrow">
+                  <span class="eyebrow-pulsing-dot"></span>THE SIGNATURE HANDLOOM COLLECTION
+                </span>
+                <h1 class="campaign-slide__title">
+                  Pure Handspun Silks.<br>
+                  <span class="gold-accent-text">Authentic Mithila Artistry.</span>
+                </h1>
+                <p class="campaign-slide__description">
+                  Intricate Kadhwa weaves, pure Tussar silks, and master artisan craftsmanship direct from Madhubani.
+                </p>
+                <div class="campaign-slide__actions">
+                  <a href="/category/cat_ethnic" class="btn btn-campaign-primary">Explore Handlooms</a>
+                  <a href="/shop" class="btn btn-campaign-secondary">All Collections</a>
+                </div>
+                <div class="campaign-slide__meta">
+                  <span class="slide-meta-badge">Curated Artisan Ateliers</span>
+                  <span class="slide-meta-badge">Pure Handspun Silks</span>
+                  <span class="slide-meta-badge">Direct Master Guild Looms</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Bridal & Occasionwear -->
+          <div class="campaign-slide" data-slide-index="1" role="group" aria-roledescription="slide" aria-label="2 of 5: Bridal & Festive Heirlooms">
+            <div class="campaign-slide__backdrop">
+              <img src="/assets/campaigns/campaign-bridal.jpg" alt="Bridal & Occasionwear Mulberry Silk Lehengas" class="campaign-slide__img" loading="lazy" width="1920" height="960">
+              <div class="campaign-slide__overlay"></div>
+            </div>
+            <div class="campaign-slide__container">
+              <div class="campaign-slide__content">
+                <span class="campaign-slide__eyebrow">
+                  <span class="eyebrow-pulsing-dot"></span>BRIDAL & OCCASIONWEAR 2026
+                </span>
+                <h2 class="campaign-slide__title">
+                  Opulent Heritage.<br>
+                  <span class="gold-accent-text">Timeless Grandeur.</span>
+                </h2>
+                <p class="campaign-slide__description">
+                  Exquisite Mulberry silks, antique silver marodi embroidery, and heirloom bridal ensembles for momentous celebrations.
+                </p>
+                <div class="campaign-slide__actions">
+                  <a href="/category/cat_wedding" class="btn btn-campaign-primary">Shop Bridal & Festive</a>
+                  <a href="/shop" class="btn btn-campaign-secondary">Wedding Atelier</a>
+                </div>
+                <div class="campaign-slide__meta">
+                  <span class="slide-meta-badge">✓ Sixteen-Kali Cuts</span>
+                  <span class="slide-meta-badge">✓ Pure Mulberry Silk</span>
+                  <span class="slide-meta-badge">✓ Heirloom Marodi Embroidery</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Royal Heritage Menswear -->
+          <div class="campaign-slide" data-slide-index="2" role="group" aria-roledescription="slide" aria-label="3 of 5: Royal Heritage Menswear">
+            <div class="campaign-slide__backdrop">
+              <img src="/assets/campaigns/campaign-menswear.jpg" alt="Royal Heritage Menswear Tailored Tussar Silk Bandhgala" class="campaign-slide__img" loading="lazy" width="1920" height="960">
+              <div class="campaign-slide__overlay"></div>
+            </div>
+            <div class="campaign-slide__container">
+              <div class="campaign-slide__content">
+                <span class="campaign-slide__eyebrow">
+                  <span class="eyebrow-pulsing-dot"></span>ROYAL HERITAGE MENSWEAR
+                </span>
+                <h2 class="campaign-slide__title">
+                  Bespoke Bandhgalas.<br>
+                  <span class="gold-accent-text">Sovereign Distinction.</span>
+                </h2>
+                <p class="campaign-slide__description">
+                  Architectural silhouettes in pure raw Tussar silk, antique bullion collars, and understated aristocratic tailoring.
+                </p>
+                <div class="campaign-slide__actions">
+                  <a href="/category/cat_men" class="btn btn-campaign-primary">Explore Menswear</a>
+                  <a href="/shop" class="btn btn-campaign-secondary">Bespoke Tailoring</a>
+                </div>
+                <div class="campaign-slide__meta">
+                  <span class="slide-meta-badge">✓ Handcrafted Jodhpur Cuts</span>
+                  <span class="slide-meta-badge">✓ Pure Tussar Raw Silk</span>
+                  <span class="slide-meta-badge">✓ Bullion Collar Detail</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Contemporary Ethnic Couture -->
+          <div class="campaign-slide" data-slide-index="3" role="group" aria-roledescription="slide" aria-label="4 of 5: Contemporary Ethnic Couture">
+            <div class="campaign-slide__backdrop">
+              <img src="/assets/campaigns/campaign-womens-couture.jpg" alt="Contemporary Ethnic Couture Gossamer Chanderi Silks" class="campaign-slide__img" loading="lazy" width="1920" height="960">
+              <div class="campaign-slide__overlay"></div>
+            </div>
+            <div class="campaign-slide__container">
+              <div class="campaign-slide__content">
+                <span class="campaign-slide__eyebrow">
+                  <span class="eyebrow-pulsing-dot"></span>CONTEMPORARY ETHNIC COUTURE
+                </span>
+                <h2 class="campaign-slide__title">
+                  Ethereal Drapes.<br>
+                  <span class="gold-accent-text">Poetic Grace.</span>
+                </h2>
+                <p class="campaign-slide__description">
+                  Gossamer Chanderi silks, Angrakha kalidars, and handwoven zari borders designed for modern festive elegance.
+                </p>
+                <div class="campaign-slide__actions">
+                  <a href="/category/cat_women" class="btn btn-campaign-primary">Discover Couture</a>
+                  <a href="/shop" class="btn btn-campaign-secondary">New Silhouettes</a>
+                </div>
+                <div class="campaign-slide__meta">
+                  <span class="slide-meta-badge">✓ Handspun Chanderi Weaves</span>
+                  <span class="slide-meta-badge">✓ Handcrafted Potli Accents</span>
+                  <span class="slide-meta-badge">✓ Feathery Lightweight Drapes</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Artisanal Accessories & Mojaris -->
+          <div class="campaign-slide" data-slide-index="4" role="group" aria-roledescription="slide" aria-label="5 of 5: Artisanal Accessories and Footwear">
+            <div class="campaign-slide__backdrop">
+              <img src="/assets/campaigns/campaign-accessories.jpg" alt="Artisanal Accessories and Zardozi Embroidered Mojaris" class="campaign-slide__img" loading="lazy" width="1920" height="960">
+              <div class="campaign-slide__overlay"></div>
+            </div>
+            <div class="campaign-slide__container">
+              <div class="campaign-slide__content">
+                <span class="campaign-slide__eyebrow">
+                  <span class="eyebrow-pulsing-dot"></span>ARTISANAL ACCESSORIES &amp; MOJARIS
+                </span>
+                <h2 class="campaign-slide__title">
+                  Hand-Stitched Luxury.<br>
+                  <span class="gold-accent-text">Finished to Perfection.</span>
+                </h2>
+                <p class="campaign-slide__description">
+                  Zardozi-embroidered antique leather footwear, handpainted pure silk stoles, and heirloom craft accents.
+                </p>
+                <div class="campaign-slide__actions">
+                  <a href="/category/cat_footwear" class="btn btn-campaign-primary">Shop Footwear &amp; Accents</a>
+                  <a href="/category/cat_accessories" class="btn btn-campaign-secondary">Silk Stoles</a>
+                </div>
+                <div class="campaign-slide__meta">
+                  <span class="slide-meta-badge">✓ Vegetable-Tanned Leather</span>
+                  <span class="slide-meta-badge">✓ Hand-Embroidered Zardozi</span>
+                  <span class="slide-meta-badge">✓ Heirloom Keepsakes</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Arrow Controls -->
+      <button class="campaign-carousel__arrow campaign-carousel__prev" id="carousel-prev-btn" aria-label="Previous Slide" type="button">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button class="campaign-carousel__arrow campaign-carousel__next" id="carousel-next-btn" aria-label="Next Slide" type="button">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <!-- Dots & Play/Pause Controls Cluster -->
+      <div class="carousel-controls-cluster">
+        <div class="campaign-carousel__pagination" id="carousel-indicators" role="tablist" aria-label="Campaign Slide Indicators">
+          <button class="carousel-dot active" data-slide-to="0" role="tab" aria-selected="true" aria-label="Slide 1: Signature Handlooms"></button>
+          <button class="carousel-dot" data-slide-to="1" role="tab" aria-selected="false" aria-label="Slide 2: Bridal &amp; Festive"></button>
+          <button class="carousel-dot" data-slide-to="2" role="tab" aria-selected="false" aria-label="Slide 3: Royal Menswear"></button>
+          <button class="carousel-dot" data-slide-to="3" role="tab" aria-selected="false" aria-label="Slide 4: Women's Couture"></button>
+          <button class="carousel-dot" data-slide-to="4" role="tab" aria-selected="false" aria-label="Slide 5: Artisanal Accessories"></button>
+        </div>
+        <button class="carousel-play-pause-btn" id="carousel-play-pause-btn" type="button" onclick="toggleCarouselPause()" aria-label="Pause automatic slide rotation" title="Pause automatic rotation">
+          <svg class="icon-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+          <svg class="icon-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </button>
+      </div>
+
+      <!-- Slide Timing Progress Indicator Bar -->
+      <div class="campaign-carousel__progress">
+        <div class="campaign-carousel__progress-bar" id="carousel-progress-bar"></div>
+      </div>
     </section>
 
-    <!-- Curated Category Hubs -->
-    <section class="section-wrapper">
-      <div class="section-header">
-        <div>
-          <h3>Curated Categories</h3>
-          <p style="color: var(--color-ink-secondary); font-size: 0.9rem;">Master artisanal craftsmanship across heritage traditions.</p>
-        </div>
+    <!-- Minimalist Trust Proof Strip -->
+    <div class="hero-trust-bar" id="hero-trust-bar">
+      <div class="hero-trust-container">
+        <div class="hero-trust-item"><span class="hero-trust-icon">✦</span> 100% Certified Handspun Silks</div>
+        <div class="hero-trust-sep">•</div>
+        <div class="hero-trust-item"><span class="hero-trust-icon">✦</span> Direct Master Weaver Looms</div>
+        <div class="hero-trust-sep">•</div>
+        <div class="hero-trust-item"><span class="hero-trust-icon">✦</span> Archival Muslin Packaging</div>
+        <div class="hero-trust-sep">•</div>
+        <div class="hero-trust-item"><span class="hero-trust-icon">✦</span> Transparent Artisan Attribution</div>
       </div>
-      <div class="category-grid" id="category-tiles-container">
-        <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- Section C: Shop by Audience (Women, Men, Kids) -->
+    <section class="section-wrapper audience-entry-section reveal-on-scroll" id="audience-entry-section">
+      <div class="section-header text-center">
+        <span class="section-badge">Marketplace Departments</span>
+        <h2 class="section-title">Shop by Audience</h2>
+        <p class="section-subtitle">Discover curated heritage collections designed for discerning women, men, and upcoming children's festive attire.</p>
+      </div>
+
+      <div class="audience-cards-grid">
+        <!-- Women Card -->
+        <a href="/women" class="audience-department-card">
+          <div class="audience-card-media">
+            <img src="/assets/campaigns/campaign-womens-couture.jpg" alt="Women's Couture Collection" loading="lazy">
+            <div class="audience-card-overlay"></div>
+          </div>
+          <div class="audience-card-content">
+            <span class="audience-card-tag">Department</span>
+            <h3 class="audience-card-title">Women's Couture</h3>
+            <p class="audience-card-desc">Pure Handloom Sarees, Gossamer Angrakhas &amp; Heirloom Silhouettes</p>
+            <div class="audience-card-footer">
+              <span class="audience-badge">6 Active Heirlooms</span>
+              <span class="audience-cta-text">Explore Women →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Men Card -->
+        <a href="/men" class="audience-department-card">
+          <div class="audience-card-media">
+            <img src="/assets/campaigns/campaign-menswear.jpg" alt="Men's Royal Couture Collection" loading="lazy">
+            <div class="audience-card-overlay"></div>
+          </div>
+          <div class="audience-card-content">
+            <span class="audience-card-tag">Department</span>
+            <h3 class="audience-card-title">Men's Bespoke</h3>
+            <p class="audience-card-desc">Royal Tussar Bandhgalas, Aristocratic Tailoring &amp; Zardozi Mojaris</p>
+            <div class="audience-card-footer">
+              <span class="audience-badge">2 Active Heirlooms</span>
+              <span class="audience-cta-text">Explore Men →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Kids Card (Truthful upcoming inventory) -->
+        <a href="/kids" class="audience-department-card audience-card-upcoming">
+          <div class="audience-card-media">
+            <img src="/assets/campaigns/campaign-sarees.jpg" alt="Kids' Festive Attire" loading="lazy">
+            <div class="audience-card-overlay"></div>
+            <div class="audience-status-pill">Upcoming Season</div>
+          </div>
+          <div class="audience-card-content">
+            <span class="audience-card-tag">Coming Soon</span>
+            <h3 class="audience-card-title">Kids' Festive</h3>
+            <p class="audience-card-desc">Handcrafted Festive Attire for Children • Traditional Weaves &amp; Pure Fibers</p>
+            <div class="audience-card-footer">
+              <span class="audience-badge audience-badge-muted">0 Active Heirlooms</span>
+              <span class="audience-cta-text">Preview Kids Edit →</span>
+            </div>
+          </div>
+        </a>
       </div>
     </section>
 
-    <!-- Discovery & Merchandising Grid -->
-    <section class="section-wrapper" id="discovery-section">
-      <div class="section-header">
+    <!-- Category Discovery: Explore by Category (Step 7) -->
+    <section class="section-wrapper homepage-categories-section reveal-on-scroll" id="category-discovery-section">
+      <div class="section-header text-center">
+        <span class="section-badge">Marketplace Departments</span>
+        <h2 class="section-title">Shop by Category</h2>
+        <p class="section-subtitle">Explore authentic handloom weaves, bespoke royal tailoring, and handcrafted accessories from independent artisans.</p>
+      </div>
+
+      <div class="category-editorial-grid" id="category-pillars-container">
+        <!-- 6 3:4 cards rendered dynamically via JS -->
+      </div>
+    </section>
+
+    <!-- 1. New Arrivals / All Marketplace Collections (Step 8: Recommended Order Item 1) -->
+    <section class="section-wrapper reveal-on-scroll" id="marketplace-trending-section">
+      <div class="section-header-row">
         <div>
-          <h3>Artisanal Collection</h3>
-          <p style="color: var(--color-ink-secondary); font-size: 0.9rem;">Verified authentic garments from approved master weavers and luxury ateliers.</p>
+          <span class="section-badge">Live From Master Handlooms</span>
+          <h2 class="section-title">Explore All Marketplace Collections</h2>
+          <p class="section-subtitle">Real handcrafted garments and accessories actively produced by our approved seller partners.</p>
         </div>
-        <span id="product-count-display" style="font-size: 0.85rem; color: var(--color-ink-muted);">Showing luxury creations</span>
+        <a href="/shop" class="btn-link-gold desktop-only" id="browse-full-catalog-link">Browse Full Marketplace Catalog →</a>
       </div>
 
-      <!-- Filters & Facets Bar -->
-      <div class="filter-bar">
-        <div class="filter-group">
-          <label class="filter-label" for="filter-search">Search</label>
-          <input type="text" id="filter-search" class="filter-select" placeholder="Search by weave, fabric..." oninput="handleSearchInput(event)">
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label" for="filter-fabric">Fabric</label>
-          <select id="filter-fabric" class="filter-select" onchange="applyFilters()">
-            <option value="">All Fabrics</option>
-            <option value="Pure Silk">Pure Silk</option>
-            <option value="Chanderi Silk">Chanderi Silk</option>
-            <option value="Tussar Silk">Tussar Silk</option>
-            <option value="Pure Leather & Silk">Leather & Silk</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label" for="filter-occasion">Occasion</label>
-          <select id="filter-occasion" class="filter-select" onchange="applyFilters()">
-            <option value="">All Occasions</option>
-            <option value="Wedding">Wedding</option>
-            <option value="Festive">Festive</option>
-            <option value="Cocktail">Cocktail</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label" for="filter-sort">Sort By</label>
-          <select id="filter-sort" class="filter-select" onchange="applyFilters()">
-            <option value="newest">Newest Arrivals</option>
-            <option value="price_asc">Price: Low to High</option>
-            <option value="price_desc">Price: High to Low</option>
-          </select>
-        </div>
-
-        <button class="btn btn-outline btn-sm" onclick="resetFilters()">Reset</button>
+      <!-- Real-time Category Filter Tabs (Populated Dynamically from Taxonomy) -->
+      <div class="marketplace-tabs-strip" id="homepage-category-tabs-strip">
+        <button class="mp-tab active" onclick="filterHomepageCatalog('all', this)">All Collections</button>
       </div>
 
-      <!-- Product Cards Grid -->
-      <div class="product-grid" id="product-grid-container">
-        <!-- Injected via JavaScript -->
+      <!-- Live Product Grid with Real Multi-Seller Cards -->
+      <div class="product-cards-grid product-grid" id="homepage-new-arrivals-grid">
+        <!-- Rendered dynamically via JS from /api/v1/products -->
+      </div>
+
+      <div class="text-center mobile-only" style="margin-top: 24px;">
+        <a href="/shop" class="btn btn-outline-gold w-100" id="mobile-view-all-link">View All Collections →</a>
+      </div>
+    </section>
+
+    <!-- Section F: The Royal Wedding & Festive Edit -->
+    <section class="section-wrapper wedding-festive-section reveal-on-scroll" id="wedding-festive-section">
+      <div class="section-header-row">
+        <div>
+          <span class="section-badge">Occasion Curation</span>
+          <h2 class="section-title">The Royal Wedding &amp; Festive Edit</h2>
+          <p class="section-subtitle">Opulent bridal lehengas, pure Katan silk sarees, and imperial accessories curated for grand celebrations.</p>
+        </div>
+        <a href="/occasion/wedding" class="btn-link-gold desktop-only">Explore Full Wedding Curation →</a>
+      </div>
+
+      <div class="product-cards-grid product-grid" id="homepage-wedding-grid">
+        <!-- Rendered dynamically by renderHomepageWeddingEdit() -->
+      </div>
+
+      <div class="text-center mobile-only" style="margin-top: 24px;">
+        <a href="/occasion/wedding" class="btn btn-outline-gold w-100">Explore Full Wedding Curation →</a>
+      </div>
+    </section>
+
+    <!-- Section G: Craft Stories & Living Heritage (Ancestral Craftsmanship) -->
+    <section class="section-wrapper brand-story-section reveal-on-scroll">
+      <div class="brand-story-grid">
+        <div class="brand-story-media">
+          <img src="/assets/campaigns/campaign-craft-storytelling.jpg" alt="Artisan hand painting Mithila silk in workshop" loading="lazy">
+          <div class="brand-story-badge">
+            <strong>Living Heritage</strong>
+            <span>Generational Mithila Weavers</span>
+          </div>
+        </div>
+        <div class="brand-story-copy">
+          <span class="section-badge">Ancestral Craftsmanship</span>
+          <h2 class="section-title">Where Every Thread Tells a Sacred Story</h2>
+          <p class="story-lead">
+            ICM Madhubani (Ishani Collection Mithila) was founded to preserve the living integrity of Indian handlooms. We unite generational Mithila artists, Varanasi master weavers, and Jaipur royal tailors directly with patrons worldwide.
+          </p>
+          <div class="story-commitments">
+            <div class="commitment-item">
+              <div class="commitment-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
+              <div>
+                <h4>Direct Craft Origin</h4>
+                <p>Connecting generational master weavers and royal ateliers directly with discerning patrons across India.</p>
+              </div>
+            </div>
+            <div class="commitment-item">
+              <div class="commitment-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div>
+                <h4>Authentic Handloom Fibers</h4>
+                <p>Traditional Bhagalpuri wild Tussar, Varanasi Katan, and gossamer Chanderi silks with zero synthetic powerloom blends.</p>
+              </div>
+            </div>
+            <div class="commitment-item">
+              <div class="commitment-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              </div>
+              <div>
+                <h4>Plastic-Free Muslin Packaging</h4>
+                <p>Every heirloom garment is rolled in unbleached organic muslin cloth and dispatched in protective archival packaging.</p>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 28px;">
+            <a href="/brands" class="btn btn-outline-gold">Meet Our Artisan Guilds →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section G (Cont.): The Virtual Mithila Atelier (Rebuilt 2-Column Editorial Component) -->
+    <section class="section-wrapper virtual-atelier-section reveal-on-scroll" id="virtual-atelier">
+      <div class="atelier-inner-container">
+        <div class="section-header text-center">
+          <span class="section-badge">Living Heritage &amp; Craft Origins</span>
+          <h2 class="section-title">The Virtual Mithila Atelier</h2>
+          <p class="section-subtitle">
+            Explore the ancestral craft techniques and GI handloom traditions behind our verified master weaving studios.
+          </p>
+        </div>
+
+        <div class="atelier-editorial-layout">
+          <!-- Left Column: Controlled 4:3 Media Frame -->
+          <div class="atelier-media-frame">
+            <img src="/assets/campaigns/campaign-craft-storytelling.jpg" alt="Artisan Weaving Studio" id="atelier-scene-img" class="atelier-scene-image" loading="lazy">
+            <div class="atelier-media-caption">
+              <span class="atelier-caption-tag" id="atelier-caption-tag">Master Atelier Documentation</span>
+              <span class="atelier-caption-title" id="atelier-caption-title">Madhubani, Mithila Heritage Cluster</span>
+            </div>
+          </div>
+
+          <!-- Right Column: Accessible Custom Tabs & Craft Narratives -->
+          <div class="atelier-content-panel">
+            <!-- Region Tab Controls -->
+            <div class="atelier-tab-controls" role="tablist" aria-label="Select Artisan Studio">
+              <button type="button" class="atelier-tab-btn active" id="atelier-tab-mithila" role="tab" aria-selected="true" onclick="switchAtelierScene('mithila')">
+                <span>Mithila Silk</span>
+              </button>
+              <button type="button" class="atelier-tab-btn" id="atelier-tab-varanasi" role="tab" aria-selected="false" onclick="switchAtelierScene('varanasi')">
+                <span>Varanasi Kadhwa</span>
+              </button>
+              <button type="button" class="atelier-tab-btn" id="atelier-tab-jaipur" role="tab" aria-selected="false" onclick="switchAtelierScene('jaipur')">
+                <span>Jaipur Bespoke</span>
+              </button>
+            </div>
+
+            <!-- Narrative Card -->
+            <div class="atelier-narrative-card">
+              <div class="atelier-card-badge-row">
+                <span class="badge-pill-gold" id="drawer-region-badge">Mithila Master Guild</span>
+                <span class="atelier-provenance-seal">✓ Heritage GI Region</span>
+              </div>
+              <h3 class="atelier-feature-title" id="drawer-feature-title">Bamboo Quill Nib Technique</h3>
+              <p class="atelier-feature-desc" id="drawer-feature-desc">
+                Artisans slice seasoned bamboo stems into microscopic nibs wrapped in raw cotton slivers. This capillary reservoir allows continuous organic linework without mechanical drafting.
+              </p>
+
+              <!-- Provenance Specs Grid -->
+              <div class="atelier-specs-grid">
+                <div class="atelier-spec-item">
+                  <span class="spec-label">Technique Origin</span>
+                  <span class="spec-value" id="drawer-meta-origin">Jitwarpur, Madhubani (GI Origin)</span>
+                </div>
+                <div class="atelier-spec-item">
+                  <span class="spec-label">Production Time</span>
+                  <span class="spec-value" id="drawer-meta-time">24–36 Days per Saree</span>
+                </div>
+                <div class="atelier-spec-item">
+                  <span class="spec-label">Purity Standard</span>
+                  <span class="spec-value" id="drawer-meta-purity">Pure Hand-Drawn Natural Silk</span>
+                </div>
+              </div>
+
+              <div class="atelier-action-row">
+                <a href="/atelier" class="btn btn-gold btn-sm">Explore Full Atelier →</a>
+                <a href="/category/cat_ethnic" class="btn btn-outline-gold btn-sm">Shop Artisan Heirlooms</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section H: Featured Sellers & Curated Artisan Guilds -->
+    <section class="section-wrapper guild-spotlight-section reveal-on-scroll" id="guilds-section">
+      <div class="section-header text-center">
+        <span class="section-badge">Independent Verified Collectives</span>
+        <h2 class="section-title">Shop by Curated Artisan Guild</h2>
+        <p class="section-subtitle">ICM Madhubani operates as a multi-vendor platform. Meet our verified master weaver collectives and explore their dedicated ateliers.</p>
+      </div>
+
+      <!-- 3 Real Seller Guild Cards -->
+      <div class="guild-grid" id="homepage-guilds-grid">
+        <!-- Rendered dynamically from /api/v1/sellers -->
+      </div>
+
+      <!-- Seller Partner Onboarding Banner (Secondary Placement - Honest Commercial Terms) -->
+      <div class="seller-onboarding-card">
+        <div class="seller-onboarding-content">
+          <span class="badge-pill-gold">Artisan Partner Program</span>
+          <h3 class="seller-onboarding-title">Are you a Master Handloom Weaver, GI Craft Collective, or Royal Atelier?</h3>
+          <p class="seller-onboarding-copy">
+            Join ICM Madhubani's curated fashion marketplace. Connect directly with discerning patrons across India with transparent commercial terms, prompt settlements, and verified artisan attribution.
+          </p>
+          <div class="seller-onboarding-actions">
+            <a href="/seller/onboarding" class="btn btn-gold">Apply to Join as a Seller Partner</a>
+            <a href="/seller/login" class="btn btn-outline-white">Seller Partner Portal Login</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Recently Viewed Heirlooms (Privacy-conscious, hidden until items exist) -->
+    <section class="section-wrapper recently-viewed-section reveal-on-scroll" id="recently-viewed-section" style="display: none;">
+      <div class="section-header-row">
+        <div>
+          <span class="section-badge">Personal Curation</span>
+          <h2 class="section-title">Recently Viewed Heirlooms</h2>
+          <p class="section-subtitle">Creations you explored during your current browsing session.</p>
+        </div>
+        <button type="button" class="btn-link-gold desktop-only" onclick="clearRecentlyViewed()" style="background: none; border: none; cursor: pointer;">Clear History</button>
+      </div>
+      <div class="product-cards-grid product-grid" id="recently-viewed-grid"></div>
+    </section>
+
+    <!-- Transparency & Craft Values Strip -->
+    <section class="trust-strip reveal-on-scroll">
+      <div class="trust-container">
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <div>
+            <h4 class="trust-title">Handcrafted Purity</h4>
+            <p class="trust-desc">Handwoven wild Tussar, Varanasi Katan, and gossamer Chanderi silks with genuine metal zari on traditional pit-looms.</p>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <div>
+            <h4 class="trust-title">Two-Tier Quality Review</h4>
+            <p class="trust-desc">Artisan collectives and individual catalog pieces are vetted separately before publication to ensure quality standards.</p>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <div>
+            <h4 class="trust-title">Direct Seller Settlements</h4>
+            <p class="trust-desc">Proceeds are disbursed directly to approved artisan collectives and sellers via a transparent platform repository ledger.</p>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+          </div>
+          <div>
+            <h4 class="trust-title">Careful Packaging & Dispatch</h4>
+            <p class="trust-desc">Breathable muslin packaging, dedicated courier tracking across India, and 7-day exchange on all standard creations.</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
   <!-- ========================================================================
-       VIEW 2: SELLER WORKSPACE
+       PAGE VIEW 2: SHOP / CATALOG (/shop, /category/:slug, /occasion/:slug)
+       ======================================================================== -->
+  <main id="view-shop" class="page-view">
+    <div class="section-wrapper page-container">
+      <!-- Breadcrumbs -->
+      <nav class="atelier-breadcrumbs" id="shop-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <span class="current">All Collections</span>
+      </nav>
+
+      <!-- Shop Editorial Header -->
+      <div class="shop-header-banner">
+        <div class="shop-header-info">
+          <span class="badge-pill" id="shop-header-badge">Atelier Directory</span>
+          <h1 class="page-main-title" id="shop-title">Handcrafted Luxury Catalogue</h1>
+          <p class="page-main-desc" id="shop-desc">
+            Explore authentic hand-drawn Mithila sarees, regal Banarasi weaves, and bespoke tailoring directly from verified master guilds.
+          </p>
+        </div>
+        <div class="shop-header-stats">
+          <span class="count-badge" id="shop-results-count">Showing 7 Creations</span>
+        </div>
+      </div>
+
+      <!-- Dynamic Subcategory Filter Bar (Phase 5 Category Architecture) -->
+      <div class="shop-subcategories-bar" id="shop-subcategories-bar" style="display: none;">
+        <div class="subcat-bar-header">
+          <span class="subcat-bar-title" id="subcat-bar-title">Curated Subcategories</span>
+          <span class="subcat-bar-hint desktop-only">Filter by specific artisanal weave &amp; cut</span>
+        </div>
+        <div class="subcat-pills-row" id="shop-subcategories-pills">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Filters & Sorting Bar -->
+      <div class="catalog-toolbar">
+        <div class="toolbar-left">
+          <!-- Category Filter -->
+          <div class="filter-pill-select">
+            <label for="filter-category">Category:</label>
+            <select id="filter-category" onchange="onFilterChange()">
+              <option value="">All Categories</option>
+              <option value="cat_ethnic">Ethnic Wear & Sarees</option>
+              <option value="cat_wedding">Wedding & Festive</option>
+              <option value="cat_women">Women's Fashion</option>
+              <option value="cat_men">Men's Bespoke</option>
+              <option value="cat_kids">Kids' Clothing</option>
+              <option value="cat_footwear">Footwear & Mojaris</option>
+              <option value="cat_accessories">Bags & Accessories</option>
+            </select>
+          </div>
+
+          <!-- Occasion Filter -->
+          <div class="filter-pill-select">
+            <label for="filter-occasion">Occasion:</label>
+            <select id="filter-occasion" onchange="onFilterChange()">
+              <option value="">All Occasions</option>
+              <option value="Festive">Festive</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Formal">Formal & Royal</option>
+            </select>
+          </div>
+
+          <!-- Fabric Filter -->
+          <div class="filter-pill-select">
+            <label for="filter-fabric">Fabric:</label>
+            <select id="filter-fabric" onchange="onFilterChange()">
+              <option value="">All Fabrics</option>
+              <option value="Tussar Silk">Tussar Silk</option>
+              <option value="Pure Silk">Pure Silk</option>
+              <option value="Chanderi Silk">Chanderi Silk</option>
+              <option value="Pure Leather & Silk">Pure Leather & Silk</option>
+            </select>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="filter-pill-select">
+            <label for="filter-price">Price:</label>
+            <select id="filter-price" onchange="onFilterChange()">
+              <option value="">All Prices</option>
+              <option value="under_5000">Under ₹5,000</option>
+              <option value="5000_15000">₹5,000 – ₹15,000</option>
+              <option value="15000_30000">₹15,000 – ₹30,000</option>
+              <option value="above_30000">₹30,000+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toolbar-right">
+          <!-- Sort Selector -->
+          <div class="filter-pill-select">
+            <label for="filter-sort">Sort:</label>
+            <select id="filter-sort" onchange="onFilterChange()">
+              <option value="">Featured Heirlooms</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="newest">Newest Creations</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filters Chips -->
+      <div class="active-filters-row" id="active-filters-container" style="display: none;">
+        <span class="active-filters-label">Active Filters:</span>
+        <div class="chips-wrap" id="active-filter-chips"></div>
+        <button class="btn-clear-filters" onclick="clearAllFilters()">Clear All</button>
+      </div>
+
+      <!-- Product Cards Grid -->
+      <div class="product-cards-grid" id="catalog-products-grid">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state-card" id="catalog-empty-state" style="display: none;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-zari-gold)" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <h3>No Garments Found</h3>
+        <p>No artisanal garments match the selected criteria. Try adjusting or clearing your filters.</p>
+        <button class="btn btn-gold" onclick="clearAllFilters()">Reset All Filters</button>
+      </div>
+    </div>
+    <div id="footer-shop-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 3: DEDICATED PRODUCT DETAIL PAGE (/product/:slug)
+       ======================================================================== -->
+  <main id="view-product-detail" class="page-view">
+    <div class="section-wrapper page-container">
+      <!-- Breadcrumbs -->
+      <nav class="atelier-breadcrumbs" id="pdp-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <a href="/shop">Shop</a> <span>/</span> <span class="current" id="pdp-crumb-title">Product</span>
+      </nav>
+
+      <!-- Main PDP Layout (2 Columns) -->
+      <div class="pdp-layout" id="pdp-main-content">
+        <!-- Left: Gallery -->
+        <div class="pdp-gallery-col">
+          <div class="pdp-stage-container" id="pdp-zoom-stage">
+            <img src="" alt="Product Stage" id="pdp-main-img" class="pdp-main-img">
+            <span class="pdp-tag-badge" id="pdp-badge">Handloom Artisan</span>
+          </div>
+          <div class="pdp-thumbnails-strip" id="pdp-thumbnails">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Right: Information & Purchasing Options -->
+        <div class="pdp-info-col">
+          <div class="pdp-seller-attribution">
+            <span>Crafted by </span>
+            <a href="#" id="pdp-seller-link" class="pdp-seller-name">Mithila Master Weavers</a>
+            <span class="verified-seal" title="Curated Artisan Guild">✓ Curated</span>
+          </div>
+
+          <h1 class="pdp-title" id="pdp-title">Garment Title</h1>
+          <p class="pdp-desc" id="pdp-desc">Description</p>
+
+          <!-- Price Display -->
+          <div class="pdp-price-row">
+            <span class="pdp-selling-price" id="pdp-price">₹0</span>
+            <span class="pdp-mrp" id="pdp-mrp">₹0</span>
+            <span class="pdp-discount-badge" id="pdp-discount">0% OFF</span>
+            <span class="pdp-tax-note">Inclusive of all taxes</span>
+          </div>
+
+          <!-- Color Swatches -->
+          <div class="pdp-option-section" id="pdp-colors-section">
+            <label class="option-label">Color: <span class="selected-val" id="pdp-selected-color">-</span></label>
+            <div class="color-swatches-row" id="pdp-color-swatches"></div>
+          </div>
+
+          <!-- Size Selector -->
+          <div class="pdp-option-section">
+            <div class="size-header-row">
+              <label class="option-label">Size: <span class="selected-val" id="pdp-selected-size">-</span></label>
+              <button class="size-guide-btn" onclick="openSizeGuideModal()">Size Guide</button>
+            </div>
+            <div class="size-pills-row" id="pdp-size-pills"></div>
+          </div>
+
+          <!-- Authoritative Stock Status -->
+          <div class="pdp-stock-status" id="pdp-stock-status">
+            <span class="stock-indicator green"></span>
+            <span id="pdp-stock-text">In Stock</span>
+          </div>
+
+          <!-- Quantity & Purchase Actions -->
+          <div class="pdp-cta-actions">
+            <div class="pdp-quantity-stepper">
+              <button onclick="decrementPdpQty()" aria-label="Decrease quantity">−</button>
+              <span id="pdp-qty-val">1</span>
+              <button onclick="incrementPdpQty()" aria-label="Increase quantity">+</button>
+            </div>
+            <button class="btn btn-gold btn-lg flex-1" id="pdp-btn-add-bag" onclick="handlePdpAddToBag()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+              Add To Bag
+            </button>
+            <button class="btn btn-outline-white btn-lg" id="pdp-btn-buy-now" onclick="handlePdpBuyNow()">
+              Buy Now
+            </button>
+            <button class="btn-wishlist-pdp" id="pdp-btn-wishlist" onclick="handlePdpWishlistToggle()" aria-label="Save to Wishlist">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </button>
+          </div>
+
+          <!-- Detailed Craft Accordions -->
+          <div class="pdp-accordions">
+            <details class="pdp-acc-item" open>
+              <summary>Fabric & Artisanal Technique</summary>
+              <div class="acc-body">
+                <p id="pdp-spec-fabric">Authentic handloom material with traditional weave.</p>
+                <p id="pdp-spec-fit">Silhouette fit details.</p>
+              </div>
+            </details>
+
+            <details class="pdp-acc-item">
+              <summary>Care & Preservation</summary>
+              <div class="acc-body">
+                <p id="pdp-spec-care">Professional dry clean only. Store in unbleached archival muslin wrap.</p>
+              </div>
+            </details>
+
+            <details class="pdp-acc-item">
+              <summary>Premium White-Glove Delivery</summary>
+              <div class="acc-body">
+                <p>Complimentary insured courier across India on orders over ₹2,999. Dispatched in archival wooden chest packaging within 24–48 business hours.</p>
+              </div>
+            </details>
+
+            <details class="pdp-acc-item">
+              <summary>7-Day Artisanal Exchange Policy</summary>
+              <div class="acc-body">
+                <p>Unworn handcrafted garments with intact tags can be exchanged or returned within 7 calendar days of receipt. Dedicated courier pickup arranged across India.</p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <!-- PDP 404 Empty State -->
+      <div class="empty-state-card" id="pdp-not-found" style="display: none;">
+        <h3>Garment Not Found in Atelier Archives</h3>
+        <p>The requested bespoke creation does not exist or has been archived from public curation.</p>
+        <a href="/shop" class="btn btn-gold">Explore All Collections</a>
+      </div>
+
+      <!-- Related Products Section -->
+      <section class="section-wrapper" id="pdp-related-section" style="padding-top: 60px;">
+        <div class="section-header">
+          <span class="section-badge">Atelier Pairings</span>
+          <h2 class="section-title">Related Handcrafted Creations</h2>
+        </div>
+        <div class="product-cards-grid" id="pdp-related-grid"></div>
+      </section>
+    </div>
+    <div id="footer-pdp-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 4: ARTISAN GUILDS & BRANDS DIRECTORY (/brands)
+       ======================================================================== -->
+  <main id="view-brands" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <span class="current">Artisan Guilds & Brands</span>
+      </nav>
+
+      <div class="shop-header-banner">
+        <div class="shop-header-info">
+          <span class="badge-pill">Double-Entry Settlement Ledger</span>
+          <h1 class="page-main-title">Curated Master Artisan Guilds</h1>
+          <p class="page-main-desc">
+            We partner directly with regional weaving collectives and bespoke ateliers across India. Every guild is an independent master artisan collective with transparent artisan compensation.
+          </p>
+        </div>
+      </div>
+
+      <div class="guild-directory-grid" id="brands-directory-grid">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
+    <div id="footer-brands-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 5: DEDICATED SELLER / ARTISAN ATELIER (/seller/:slug)
+       ======================================================================== -->
+  <main id="view-seller-store" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs" id="seller-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <a href="/brands">Guilds</a> <span>/</span> <span class="current" id="seller-crumb-name">Artisan Store</span>
+      </nav>
+
+      <div class="seller-profile-banner" id="seller-banner-content">
+        <div class="seller-avatar-circle">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-zari-gold)" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        </div>
+        <div class="seller-banner-details">
+          <div class="seller-tag-row">
+            <span class="badge-pill">Platform Verified Atelier</span>
+            <span class="seller-verified-status">✓ 88% Net Collective Payout</span>
+          </div>
+          <h1 class="seller-name-heading" id="seller-profile-name">Store Name</h1>
+          <p class="seller-bio-text" id="seller-profile-bio">Preserving generational craft heritage with contemporary bespoke apparel.</p>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top: 40px;">
+        <span class="section-badge">Atelier Catalogue</span>
+        <h2 class="section-title">Creations From This Workshop</h2>
+      </div>
+
+      <div class="product-cards-grid" id="seller-products-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+    <div id="footer-seller-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 6: SEARCH RESULTS PAGE (/search)
+       ======================================================================== -->
+  <main id="view-search" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <span class="current">Search Results</span>
+      </nav>
+
+      <div class="shop-header-banner">
+        <div class="shop-header-info">
+          <span class="badge-pill">Search Discovery</span>
+          <h1 class="page-main-title" id="search-title">Search Results</h1>
+          <p class="page-main-desc" id="search-desc">Querying handcrafted inventory across all regional guild collections.</p>
+        </div>
+        <div class="shop-header-stats">
+          <span class="count-badge" id="search-results-count">0 Results</span>
+        </div>
+      </div>
+
+      <div class="search-box-large">
+        <input type="search" id="search-page-input" placeholder="Search by craft, silk, occasion, or motif..." onkeydown="if(event.key==='Enter') executeSearchPage()">
+        <button class="btn btn-gold" onclick="executeSearchPage()">Search Archives</button>
+      </div>
+
+      <div class="product-cards-grid" id="search-products-grid" style="margin-top: 32px;"></div>
+
+      <div class="empty-state-card" id="search-empty-state" style="display: none;">
+        <h3>No Exact Matches Found</h3>
+        <p>No artisanal garments match your search term. Explore popular handcrafted categories:</p>
+        <div class="popular-search-tags" style="margin-top: 14px;">
+          <a href="/category/cat_ethnic" class="btn btn-outline-white btn-sm">Tussar Silk Sarees</a>
+          <a href="/category/cat_wedding" class="btn btn-outline-white btn-sm">Bridal Lehengas</a>
+          <a href="/category/cat_men" class="btn btn-outline-white btn-sm">Royal Bandhgalas</a>
+          <a href="/category/cat_footwear" class="btn btn-outline-white btn-sm">Zardozi Mojaris</a>
+        </div>
+      </div>
+    </div>
+    <div id="footer-search-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 7: WISHLIST (/wishlist)
+       ======================================================================== -->
+  <main id="view-wishlist" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <span class="current">Saved Wishlist</span>
+      </nav>
+
+      <div class="shop-header-banner">
+        <div class="shop-header-info">
+          <span class="badge-pill">Patron Curation</span>
+          <h1 class="page-main-title">Saved Heirlooms & Wishlist</h1>
+          <p class="page-main-desc">Your personally curated selection of handcrafted garments reserved for future consideration.</p>
+        </div>
+        <div class="shop-header-stats">
+          <span class="count-badge" id="wishlist-page-count">0 Saved Heirlooms</span>
+        </div>
+      </div>
+
+      <div class="product-cards-grid" id="wishlist-products-grid"></div>
+
+      <div class="empty-state-card" id="wishlist-empty-state" style="display: none;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-zari-gold)" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <h3>Your Wishlist is Empty</h3>
+        <p>You have not saved any bespoke pieces to your curation yet.</p>
+        <a href="/shop" class="btn btn-gold">Discover Handcrafted Silks</a>
+      </div>
+    </div>
+    <div id="footer-wishlist-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 8: SHOPPING BAG / CART (/cart)
+       ======================================================================== -->
+  <main id="view-cart" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <span class="current">Shopping Bag</span>
+      </nav>
+
+      <h1 class="page-main-title">Your Curated Shopping Bag</h1>
+
+      <div class="cart-layout-grid" id="cart-content-grid">
+        <!-- Cart Items Column -->
+        <div class="cart-items-col" id="cart-items-container">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Order Summary Column -->
+        <div class="cart-summary-col">
+          <div class="order-summary-card">
+            <h3>Order Summary</h3>
+
+            <div class="free-shipping-progress" id="free-shipping-bar">
+              <span id="shipping-progress-text">Add ₹2,999 for Complimentary Secure Delivery</span>
+              <div class="progress-track"><div class="progress-fill" id="shipping-progress-fill" style="width: 0%;"></div></div>
+            </div>
+
+            <div class="summary-line">
+              <span>Bag Subtotal</span>
+              <span id="cart-subtotal-val">₹0</span>
+            </div>
+
+            <div class="summary-line">
+              <span>Estimated GST <span class="tax-info-tooltip" title="Calculated at the standard marketplace configured tax rate (5%) on merchandise." aria-label="Tax policy information">ℹ</span></span>
+              <span id="cart-tax-val">₹0</span>
+            </div>
+
+            <div class="summary-line">
+              <span>Premium White-Glove Dispatch</span>
+              <span id="cart-shipping-val">₹0</span>
+            </div>
+
+            <div class="summary-line total-line">
+              <span>Total Payable</span>
+              <span id="cart-total-val" class="highlight-price">₹0</span>
+            </div>
+
+            <a href="/checkout" class="btn btn-gold btn-lg w-100" style="margin-top: 24px; text-align: center;">
+              Proceed To Checkout →
+            </a>
+
+            <div class="cart-trust-badges">
+              <span>🔒 256-Bit Encrypted Checkout</span>
+              <span>🌿 Authentic Handloom Provenance</span>
+              <span>🔄 7-Day Hassle-Free Returns</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state-card" id="cart-empty-state" style="display: none;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-zari-gold)" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+        <h3>Your Shopping Bag is Empty</h3>
+        <p>Explore our master weavers' collections and add genuine handloom pieces to your bag.</p>
+        <a href="/shop" class="btn btn-gold">Explore Collections</a>
+      </div>
+    </div>
+    <div id="footer-cart-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 9: CHECKOUT (/checkout)
+       ======================================================================== -->
+  <main id="view-checkout" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <a href="/cart">Bag</a> <span>/</span> <span class="current">Checkout</span>
+      </nav>
+
+      <h1 class="page-main-title">Secure Patron Checkout</h1>
+
+      <div class="checkout-layout-grid" id="checkout-main-grid">
+        <!-- Left: Shipping Address & Payment Selection -->
+        <div class="checkout-form-col">
+          <form id="checkout-form" onsubmit="submitPatronOrder(event)">
+            <div class="checkout-section-block">
+              <h3 class="checkout-section-title">1. Delivery Address</h3>
+              <div class="form-grid-2">
+                <div class="form-field">
+                  <label>Full Name *</label>
+                  <input type="text" id="chk-name" required placeholder="Siddharth Roy">
+                </div>
+                <div class="form-field">
+                  <label>Mobile Number (For Delivery Tracking) *</label>
+                  <input type="tel" id="chk-phone" required pattern="[0-9]{10}" placeholder="9876543210">
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Address Line (Flat, Villa, Street) *</label>
+                <input type="text" id="chk-address" required placeholder="42 Royal Silk Enclave, Civil Lines">
+              </div>
+              <div class="form-grid-3">
+                <div class="form-field">
+                  <label>City *</label>
+                  <input type="text" id="chk-city" required placeholder="New Delhi">
+                </div>
+                <div class="form-field">
+                  <label>State *</label>
+                  <input type="text" id="chk-state" required placeholder="Delhi">
+                </div>
+                <div class="form-field">
+                  <label>PIN Code *</label>
+                  <input type="text" id="chk-pincode" required pattern="[0-9]{6}" placeholder="110001">
+                </div>
+              </div>
+            </div>
+
+            <div class="checkout-section-block">
+              <h3 class="checkout-section-title">2. Payment Method</h3>
+              <div class="payment-options-grid">
+                <label class="payment-option-card active" style="border: 1.5px solid var(--color-gold); background: #FAF9F6;">
+                  <input type="radio" name="paymentMethod" value="PAYTM" checked>
+                  <div class="pay-option-info">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+                      <strong>Paytm Payment Gateway (UPI, Cards, Net Banking)</strong>
+                      <span class="badge" style="background: rgba(0, 186, 242, 0.1); color: #00BAF2; font-weight: 600; font-size: 0.72rem; padding: 2px 8px; border-radius: 4px;">Official Gateway</span>
+                    </div>
+                    <span style="display: block; margin-top: 4px; font-size: 0.8rem; color: var(--color-ink-muted);">Zero surcharge. 256-bit encrypted transaction with instant order confirmation.</span>
+                  </div>
+                </label>
+                <label class="payment-option-card">
+                  <input type="radio" name="paymentMethod" value="COD">
+                  <div class="pay-option-info">
+                    <strong>Pay on Delivery / Cash on Delivery</strong>
+                    <span>Inspect your archival parcel before releasing payment to the courier.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-gold btn-lg w-100" id="btn-place-order">
+              Authorize & Place Order
+            </button>
+          </form>
+        </div>
+
+        <!-- Right: Order Summary Sidebar -->
+        <div class="checkout-summary-col">
+          <div class="order-summary-card">
+            <h3>Items in Order</h3>
+            <div id="checkout-items-list" class="checkout-items-list"></div>
+
+            <div class="summary-line" style="margin-top: 16px;">
+              <span>Subtotal</span>
+              <span id="chk-subtotal-val">₹0</span>
+            </div>
+            <div class="summary-line">
+              <span>Estimated GST <span class="tax-info-tooltip" title="Calculated at the standard marketplace configured tax rate (5%) on merchandise." aria-label="Tax policy information">ℹ</span></span>
+              <span id="chk-tax-val">₹0</span>
+            </div>
+            <div class="summary-line">
+              <span>Secure Shipping</span>
+              <span id="chk-shipping-val">₹0</span>
+            </div>
+            <div class="summary-line total-line">
+              <span>Total Amount</span>
+              <span id="chk-total-val" class="highlight-price">₹0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Confirmation Screen (Hidden until order completes) -->
+      <div class="order-confirmation-card" id="order-success-screen" style="display: none;">
+        <div class="success-icon">✓</div>
+        <h2>Artisanal Order Confirmed</h2>
+        <p class="order-success-lead">
+          Your commission has been logged with our master artisan guilds. An archival muslin packaging parcel is being prepared.
+        </p>
+        <div class="order-id-box">
+          <span>Order Reference ID:</span>
+          <strong id="confirmed-order-id">-</strong>
+        </div>
+        <div class="confirmation-actions">
+          <a href="#" id="btn-view-confirmed-order" class="btn btn-gold">View Order Details</a>
+          <a href="/shop" class="btn btn-outline-white">Continue Exploring</a>
+        </div>
+      </div>
+    </div>
+    <div id="footer-checkout-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 10: PATRON ACCOUNT OVERVIEW (/account)
+       ======================================================================== -->
+  <main id="view-account" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <span class="current">Patron Account</span>
+      </nav>
+
+      <h1 class="page-main-title">Patron Atelier Dashboard</h1>
+
+      <div class="account-dashboard-grid">
+        <div class="account-card profile-card">
+          <div class="profile-header">
+            <div class="user-avatar-circle">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div>
+              <h3 id="acc-user-email">patron@icm-madhubani.local</h3>
+              <span class="badge-pill">Authenticated Patron</span>
+            </div>
+          </div>
+          <p class="account-meta-text">Member of the ICM Madhubani Handloom Guild Community. Your personal data is protected by strict DPDP-ready controls.</p>
+        </div>
+
+        <div class="account-actions-grid">
+          <a href="/account/orders" class="account-nav-tile">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+            <h4>My Orders & Tracking</h4>
+            <p>View order progress, multi-seller packages, and tracking details.</p>
+          </a>
+
+          <a href="/wishlist" class="account-nav-tile">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <h4>Saved Wishlist</h4>
+            <p>Curated list of your favorite bespoke pieces.</p>
+          </a>
+
+          <a href="/account/returns" class="account-nav-tile">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+            <h4>Returns & Claims</h4>
+            <p>Initiate standard 7-day handcrafted returns or check claim status.</p>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="footer-account-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 11: PATRON ORDERS (/account/orders)
+       ======================================================================== -->
+  <main id="view-account-orders" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <a href="/account">Account</a> <span>/</span> <span class="current">Order History</span>
+      </nav>
+
+      <h1 class="page-main-title">Your Order History</h1>
+      <p class="page-main-desc">Track status and individual package dispatch from our regional master artisan guilds.</p>
+
+      <div class="orders-list-wrap" id="account-orders-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="empty-state-card" id="orders-empty-state" style="display: none;">
+        <h3>No Orders Placed Yet</h3>
+        <p>You have not placed any orders yet. Discover our artisanal sarees, sherwanis, and stoles.</p>
+        <a href="/shop" class="btn btn-gold">Explore Collections</a>
+      </div>
+    </div>
+    <div id="footer-orders-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 12: ORDER DETAIL (/account/orders/:id)
+       ======================================================================== -->
+  <main id="view-account-order-detail" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <a href="/account">Account</a> <span>/</span> <a href="/account/orders">Orders</a> <span>/</span> <span class="current" id="order-detail-crumb">Details</span>
+      </nav>
+
+      <div class="order-detail-card" id="order-detail-content">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+    <div id="footer-order-detail-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       PAGE VIEW 13: RETURNS & CLAIMS (/account/returns)
+       ======================================================================== -->
+  <main id="view-account-returns" class="page-view">
+    <div class="section-wrapper page-container">
+      <nav class="atelier-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <a href="/account">Account</a> <span>/</span> <span class="current">Returns & Claims</span>
+      </nav>
+
+      <h1 class="page-main-title">Artisanal Returns & Exchanges</h1>
+      <p class="page-main-desc">
+        We respect the dignity of traditional craft and provide a transparent 7-day exchange window for all unworn handcrafted garments.
+      </p>
+
+      <div class="returns-layout-grid">
+        <div class="return-form-card">
+          <h3>Initiate a Return / Exchange</h3>
+          <form id="return-request-form" onsubmit="submitReturnRequest(event)">
+            <div class="form-field">
+              <label>Select Order *</label>
+              <select id="return-order-select" required onchange="populateReturnItems()">
+                <option value="">Select an eligible order</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Select Item *</label>
+              <select id="return-item-select" required>
+                <option value="">Select an item from the order</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Reason for Return / Exchange *</label>
+              <select id="return-reason-select" required>
+                <option value="SIZE_MISMATCH">Size / Fit Discrepancy</option>
+                <option value="TRANSIT_DAMAGE">Damaged in Transit</option>
+                <option value="CRAFT_DEFECT">Weaving / Fabric Imperfection</option>
+                <option value="COLOR_DISCREPANCY">Color Discrepancy from Display</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Detailed Observations *</label>
+              <textarea id="return-remarks" rows="3" required placeholder="Please describe the fit or observation so our master weavers can assist..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gold w-100">Submit Return Request</button>
+          </form>
+        </div>
+
+        <div class="return-policy-card">
+          <h3>Artisanal Return Policy</h3>
+          <ul class="policy-bullet-list">
+            <li><strong>7 Calendar Days:</strong> Requests must be submitted within 7 days of package delivery.</li>
+            <li><strong>Intact Security Ribbon:</strong> Security tags and archival muslin wrapping must be present.</li>
+            <li><strong>Zero Cost Pickup:</strong> Our insured courier partner will collect the return from your shipping address.</li>
+            <li><strong>Refund Release:</strong> Upon verification by our quality desk, refund or replacement is disbursed within 48 hours.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div id="footer-returns-container"></div>
+  </main>
+
+  <!-- ========================================================================
+       VIEW 14: SELLER WORKSPACE (Internal Partner Portal)
        ======================================================================== -->
   <main id="view-seller" class="portal-view">
-    <div class="section-wrapper">
+    <div class="section-wrapper page-container">
       <div class="section-header">
         <div>
-          <h3>Seller Atelier Workspace</h3>
-          <p style="color: var(--color-ink-secondary); font-size: 0.9rem;">Manage your fashion store, variants, assigned sub-orders, and settlement statements.</p>
+          <span class="badge-pill">Seller Workspace</span>
+          <h1 class="page-main-title">Artisan & Seller Partner Portal</h1>
         </div>
-        <div id="seller-status-pill">
-          <!-- Populated dynamically -->
+        <div class="portal-nav-tabs">
+          <button class="tab-btn active" onclick="switchSellerSubRoute('orders')">Orders</button>
+          <button class="tab-btn" onclick="switchSellerSubRoute('catalogue')">Catalogue</button>
+          <button class="tab-btn" onclick="switchSellerSubRoute('inventory')">Inventory</button>
+          <button class="tab-btn" onclick="switchSellerSubRoute('settlements')">Settlements (88%)</button>
         </div>
       </div>
 
-      <div class="portal-tabs">
-        <button class="tab-btn active" onclick="switchSellerTab('orders')">Assigned Orders</button>
-        <button class="tab-btn" onclick="switchSellerTab('catalog')">Catalogue & Variants</button>
-        <button class="tab-btn" onclick="switchSellerTab('settlements')">Settlement Ledger</button>
-        <button class="tab-btn" onclick="switchSellerTab('onboarding')">Store Onboarding</button>
-      </div>
-
-      <!-- Tab: Assigned Orders -->
+      <!-- Seller Sub-Tab 1: Orders -->
       <div id="seller-tab-orders" class="seller-sub-tab">
-        <h4 style="margin-bottom: 16px;">Assigned Fulfilment Orders</h4>
-        <div style="overflow-x: auto;">
+        <h3>Orders To Fulfill</h3>
+        <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Sub-Order #</th>
-                <th>Created</th>
-                <th>Items</th>
-                <th>Subtotal</th>
-                <th>Platform Fee (12%)</th>
-                <th>Net Payout</th>
+                <th>Sub-Order ID</th>
+                <th>Parent Order</th>
+                <th>Destination</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th>Total Value</th>
+                <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="seller-orders-tbody">
-              <!-- Populated via JS -->
+            <tbody id="seller-orders-table-body">
+              <tr><td colspan="6" class="text-center">Loading orders...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Tab: Catalogue & Variants -->
-      <div id="seller-tab-catalog" class="seller-sub-tab" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <h4>Your Fashion Catalogue</h4>
-          <button class="btn btn-primary btn-sm" onclick="toggleAddProductForm()">+ Add New Garment</button>
-        </div>
-
-        <!-- Add Garment Form -->
-        <div id="add-product-form" style="display: none; background: #fff; border: 1px solid var(--color-border); padding: 24px; margin-bottom: 24px; border-radius: var(--radius-xs);">
-          <h4 style="margin-bottom: 16px;">Submit Garment for Moderation</h4>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px;">
-            <div>
-              <label class="filter-label">Garment Title</label>
-              <input type="text" id="new-prod-title" class="filter-select" style="width: 100%;" placeholder="e.g. Mulberry Silk Kurta">
-            </div>
-            <div>
-              <label class="filter-label">Category</label>
-              <select id="new-prod-cat" class="filter-select" style="width: 100%;">
-                <option value="cat_ethnic">Ethnic Wear</option>
-                <option value="cat_wedding">Wedding & Festive</option>
-                <option value="cat_women">Women's Fashion</option>
-                <option value="cat_men">Men's Fashion</option>
-              </select>
-            </div>
-            <div>
-              <label class="filter-label">Fabric / Material</label>
-              <input type="text" id="new-prod-fabric" class="filter-select" style="width: 100%;" placeholder="e.g. Pure Mulberry Silk">
-            </div>
-            <div>
-              <label class="filter-label">Occasion</label>
-              <input type="text" id="new-prod-occasion" class="filter-select" style="width: 100%;" placeholder="e.g. Wedding Reception">
-            </div>
-            <div>
-              <label class="filter-label">Selling Price (₹)</label>
-              <input type="number" id="new-prod-price" class="filter-select" style="width: 100%;" placeholder="12500">
-            </div>
-            <div>
-              <label class="filter-label">Available Inventory</label>
-              <input type="number" id="new-prod-stock" class="filter-select" style="width: 100%;" placeholder="5">
-            </div>
+      <!-- Seller Sub-Tab 2: Catalogue -->
+      <div id="seller-tab-catalogue" class="seller-sub-tab" style="display: none;">
+        <div class="flex-between" style="margin-bottom: 20px;">
+          <div>
+            <h3>Your Workshop Catalogue</h3>
+            <p style="font-size: 0.8rem; color: var(--color-ink-muted);">Manage your submitted, approved, and active garments.</p>
           </div>
-          <button class="btn btn-accent btn-sm" onclick="submitNewProduct()">Submit for Authenticity Review</button>
+          <button class="btn btn-gold btn-sm" onclick="openAddProductModal()">+ Add New Garment</button>
         </div>
-
-        <div style="overflow-x: auto;">
+        <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Category</th>
                 <th>Fabric</th>
-                <th>Occasion</th>
-                <th>Variants (Size/Price/Stock)</th>
                 <th>Moderation Status</th>
+                <th>Active</th>
+                <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="seller-catalog-tbody">
-              <!-- Populated via JS -->
+            <tbody id="seller-catalog-table-body">
+              <tr><td colspan="6" class="text-center">Loading catalogue...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Tab: Settlement Ledger -->
-      <div id="seller-tab-settlements" class="seller-sub-tab" style="display: none;">
-        <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border); border-radius: var(--radius-xs); margin-bottom: 24px; display: flex; gap: 32px;">
+      <!-- Seller Sub-Tab 3: Inventory -->
+      <div id="seller-tab-inventory" class="seller-sub-tab" style="display: none;">
+        <div class="flex-between" style="margin-bottom: 20px;">
           <div>
-            <span class="filter-label">Accrued Settlement Balance</span>
-            <h2 id="seller-balance-display" style="color: var(--color-forest); font-size: 2.2rem;">₹0</h2>
-          </div>
-          <div>
-            <span class="filter-label">Platform Commission Standard</span>
-            <h2 style="font-size: 2.2rem;">12%</h2>
+            <h3>Live Inventory Stock Levels</h3>
+            <p style="font-size: 0.8rem; color: var(--color-ink-muted);">Real-time stock controls. Out-of-stock items are automatically removed from active customer shopping.</p>
           </div>
         </div>
-
-        <h4>Ledger Statement</h4>
-        <div style="overflow-x: auto; margin-top: 12px;">
+        <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Reference Note</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th>SKU</th>
+                <th>Color</th>
+                <th>Size</th>
+                <th>Selling Price</th>
+                <th>Available Stock</th>
+                <th>Reserved Stock</th>
+                <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="seller-ledger-tbody">
-              <!-- Populated via JS -->
+            <tbody id="seller-inventory-table-body">
+              <tr><td colspan="7" class="text-center">Loading inventory...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Tab: Store Onboarding -->
-      <div id="seller-tab-onboarding" class="seller-sub-tab" style="display: none;">
-        <div style="background: #fff; border: 1px solid var(--color-border); padding: 32px; max-width: 650px; border-radius: var(--radius-xs);">
-          <h4 style="margin-bottom: 8px;">Seller Application & Verification</h4>
-          <p style="font-size: 0.85rem; color: var(--color-ink-muted); margin-bottom: 24px;">Submit business details for platform authenticity vetting. Personal owner details are strictly excluded.</p>
-
-          <div style="display: flex; flex-direction: column; gap: 16px;">
-            <div>
-              <label class="filter-label">Atelier / Store Name</label>
-              <input type="text" id="onboard-store-name" class="filter-select" style="width: 100%;" placeholder="e.g. Royal Silk Handlooms">
-            </div>
-            <div>
-              <label class="filter-label">Business GSTIN (15 Alphanumeric)</label>
-              <input type="text" id="onboard-gstin" class="filter-select" style="width: 100%;" placeholder="09ABCDE1234F1Z5">
-            </div>
-            <div>
-              <label class="filter-label">Business PAN</label>
-              <input type="text" id="onboard-pan" class="filter-select" style="width: 100%;" placeholder="ABCDE1234F">
-            </div>
-            <div>
-              <label class="filter-label">Operating Address</label>
-              <input type="text" id="onboard-address" class="filter-select" style="width: 100%;" placeholder="Studio Address, City, State, PIN">
-            </div>
-            <button class="btn btn-accent" onclick="submitSellerOnboarding()">Submit Verification Application</button>
+      <!-- Seller Sub-Tab 4: Settlements -->
+      <div id="seller-tab-settlements" class="seller-sub-tab" style="display: none;">
+        <div class="settlement-overview-card">
+          <div class="settle-metric">
+            <span class="metric-label">Settled Payouts</span>
+            <span class="metric-val" id="seller-balance-settled">₹0</span>
           </div>
+          <div class="settle-metric">
+            <span class="metric-label">Pending Escrow Balances</span>
+            <span class="metric-val" id="seller-balance-pending">₹0</span>
+          </div>
+          <div class="settle-metric">
+            <span class="metric-label">Net Artisan Payout Rate</span>
+            <span class="metric-val gold">88.0%</span>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 30px;">Double-Entry Ledger Transactions</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Entry ID</th>
+                <th>Type</th>
+                <th>Sub-Order</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="seller-ledger-table-body">
+              <tr><td colspan="5" class="text-center">Loading ledger entries...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </main>
 
   <!-- ========================================================================
-       VIEW 3: PLATFORM OWNER / SUPER ADMIN
+       VIEW 15: ADMIN CONSOLE (Super Admin Governance)
        ======================================================================== -->
   <main id="view-admin" class="portal-view">
-    <div class="section-wrapper">
+    <div class="section-wrapper page-container">
       <div class="section-header">
         <div>
-          <h3>Platform Governance & Super Admin Console</h3>
-          <p style="color: var(--color-ink-secondary); font-size: 0.9rem;">Private administration portal with mandatory MFA and immutable security audit logs.</p>
+          <span class="badge-pill">Owner Governance Console</span>
+          <h1 class="page-main-title">Platform Administration</h1>
         </div>
-        <div id="admin-auth-indicator">
-          <!-- Populated via JS -->
-        </div>
-      </div>
-
-      <!-- Admin Login Box (if unauthenticated) -->
-      <div id="admin-login-box" style="background: #fff; border: 1px solid var(--color-border); padding: 32px; max-width: 480px; margin: 40px auto; border-radius: var(--radius-xs);">
-        <h4 style="margin-bottom: 6px;">Super Admin Authentication</h4>
-        <p style="font-size: 0.82rem; color: var(--color-ink-muted); margin-bottom: 20px;">Requires administrator password and 6-digit TOTP MFA verification code.</p>
-
-        <div style="display: flex; flex-direction: column; gap: 14px;">
-          <div>
-            <label class="filter-label">Admin Email</label>
-            <input type="email" id="admin-login-email" class="filter-select" style="width: 100%;" value="admin@vespera.local">
-          </div>
-          <div>
-            <label class="filter-label">Password</label>
-            <input type="password" id="admin-login-pass" class="filter-select" style="width: 100%;" value="VesperaAdmin2026!#">
-          </div>
-          <div>
-            <label class="filter-label">TOTP MFA Code (Use 849201 for test verification)</label>
-            <input type="text" id="admin-login-totp" class="filter-select" style="width: 100%;" placeholder="849201" value="849201">
-          </div>
-          <button class="btn btn-primary" onclick="loginAdmin()">Verify MFA & Enter Console</button>
+        <div class="portal-nav-tabs">
+          <button class="tab-btn active" onclick="switchAdminSubRoute('moderation')">Product Moderation</button>
+          <button class="tab-btn" onclick="switchAdminSubRoute('categories')">Taxonomy &amp; Merchandising</button>
+          <button class="tab-btn" onclick="switchAdminSubRoute('sellers')">Seller Verification</button>
+          <button class="tab-btn" onclick="switchAdminSubRoute('audit')">Audit Logs</button>
+          <button class="tab-btn" onclick="switchAdminSubRoute('tax')">Tax Verification &amp; Policy</button>
+          <button class="tab-btn" onclick="switchAdminSubRoute('integrations')">Settings &rarr; API &amp; Integrations</button>
         </div>
       </div>
 
-      <!-- Admin Authenticated Dashboard -->
-      <div id="admin-dashboard-content" style="display: none;">
-        <!-- KPI Cards -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
-          <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border);">
-            <span class="filter-label">Total Sellers</span>
-            <h2 id="kpi-sellers" style="font-size: 2.4rem;">0</h2>
-          </div>
-          <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border);">
-            <span class="filter-label">Pending Verification</span>
-            <h2 id="kpi-pending-sellers" style="font-size: 2.4rem; color: var(--color-ochre);">0</h2>
-          </div>
-          <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border);">
-            <span class="filter-label">Approved Products</span>
-            <h2 id="kpi-products" style="font-size: 2.4rem; color: var(--color-forest);">0</h2>
-          </div>
-          <div style="background: #fff; padding: 20px; border: 1px solid var(--color-border);">
-            <span class="filter-label">Moderation Queue</span>
-            <h2 id="kpi-pending-prods" style="font-size: 2.4rem; color: var(--color-crimson);">0</h2>
-          </div>
-        </div>
-
-        <div class="portal-tabs">
-          <button class="tab-btn active" onclick="switchAdminTab('sellers')">Seller Verification Queue</button>
-          <button class="tab-btn" onclick="switchAdminTab('moderation')">Product Moderation Queue</button>
-          <button class="tab-btn" onclick="switchAdminTab('audit')">Immutable Audit Logs</button>
-        </div>
-
-        <!-- Tab: Seller Queue -->
-        <div id="admin-tab-sellers" class="admin-sub-tab">
-          <h4 style="margin-bottom: 16px;">Seller Applications</h4>
+      <!-- Admin Tab 1: Product Moderation -->
+      <div id="admin-tab-moderation" class="admin-sub-tab">
+        <h3>Product Authenticity & Moderation Queue</h3>
+        <p style="font-size: 0.8rem; color: var(--color-ink-muted); margin-bottom: 16px;">Review seller-submitted garments. Approved garments automatically appear on homepage and category listings.</p>
+        <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Store Name</th>
-                <th>GSTIN</th>
-                <th>PAN</th>
-                <th>Operating Address</th>
+                <th>Product Title</th>
+                <th>Seller</th>
+                <th>Category</th>
+                <th>Fabric Claim</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="admin-sellers-tbody">
-              <!-- Populated via JS -->
+            <tbody id="admin-moderation-table-body">
+              <tr><td colspan="6" class="text-center">Loading queue...</td></tr>
             </tbody>
           </table>
         </div>
+      </div>
 
-        <!-- Tab: Product Moderation -->
-        <div id="admin-tab-moderation" class="admin-sub-tab" style="display: none;">
-          <h4 style="margin-bottom: 16px;">Garment Authenticity & Content Moderation</h4>
+      <!-- Admin Tab: Categories & Taxonomy Merchandising (Section 4) -->
+      <div id="admin-tab-categories" class="admin-sub-tab" style="display: none;">
+        <div class="flex-between" style="margin-bottom: 20px;">
+          <div>
+            <h3>Marketplace Category Taxonomy &amp; Merchandising</h3>
+            <p style="font-size: 0.8rem; color: var(--color-ink-muted);">Centrally managed global categories. Sellers must select from this taxonomy.</p>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="openAdminCategoryModal()">+ Add New Category</button>
+        </div>
+        <div class="table-responsive">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Garment Title</th>
-                <th>Seller Store</th>
-                <th>Fabric / Occasion</th>
-                <th>Brand Claim</th>
+                <th>ID</th>
+                <th>Category Name</th>
+                <th>Display Order</th>
+                <th>Live In-Stock Items</th>
+                <th>Homepage</th>
                 <th>Status</th>
-                <th>Action</th>
+                <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="admin-moderation-tbody">
-              <!-- Populated via JS -->
+            <tbody id="admin-categories-table-body">
+              <tr><td colspan="7" class="text-center">Loading taxonomy...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab 2: Seller Verification -->
+      <div id="admin-tab-sellers" class="admin-sub-tab" style="display: none;">
+        <h3>Seller Verification Queue</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Store Name</th>
+                <th>User ID</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-sellers-table-body">
+              <tr><td colspan="4" class="text-center">Loading sellers...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab 3: Audit Logs -->
+      <div id="admin-tab-audit" class="admin-sub-tab" style="display: none;">
+        <h3>Immutable Audit Event Trail</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Event ID</th>
+                <th>Action</th>
+                <th>Actor</th>
+                <th>Target</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="admin-audit-table-body">
+              <tr><td colspan="5" class="text-center">Loading audit events...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab 5: Tax Verification & Policy -->
+      <div id="admin-tab-tax" class="admin-sub-tab" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+          <div>
+            <h3>Product Tax &amp; HSN Verification Governance</h3>
+            <p style="font-size: 0.8rem; color: var(--color-ink-muted); margin-top: 4px;">Review seller-proposed HSN classifications and GST rates before garments become checkout-eligible. Material product changes require reverification.</p>
+          </div>
+          <span class="badge-pill" style="background: rgba(196, 151, 82, 0.15); color: #B45309; border: 1px solid rgba(196, 151, 82, 0.3);">Statutory Compliance Queue</span>
+        </div>
+
+        <div class="table-responsive" style="margin-bottom: 32px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product Title</th>
+                <th>Seller Store</th>
+                <th>Proposed HSN</th>
+                <th>Proposed Rate</th>
+                <th>Classification Notes</th>
+                <th>Verification Status</th>
+                <th>Super Admin Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-tax-table-body">
+              <tr><td colspan="7" class="text-center">Loading tax proposals queue...</td></tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Tab: Audit Logs -->
-        <div id="admin-tab-audit" class="admin-sub-tab" style="display: none;">
-          <h4 style="margin-bottom: 16px;">Security & Operational Audit Trail (Sanitized)</h4>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Actor Role</th>
-                <th>Action</th>
-                <th>Target Type</th>
-                <th>IP Hash (Pseudonymized)</th>
-                <th>Sanitized Details</th>
-              </tr>
-            </thead>
-            <tbody id="admin-audit-tbody">
-              <!-- Populated via JS -->
-            </tbody>
-          </table>
+        <!-- Platform Tax & Shipping Policy Configuration -->
+        <div style="background: var(--color-surface-warm); padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0; font-family: var(--font-serif-display); font-size: 1.15rem; color: var(--color-ink-primary);">Marketplace Commercial Policy &amp; Tax Guidelines</h4>
+            <span class="status-pill paid">Central Server Calculation</span>
+          </div>
+          <div class="form-row-3col">
+            <div class="form-group">
+              <label>Standard Marketplace Commission</label>
+              <input type="text" value="12% (Immutable Platform Rate)" disabled style="background: #EFEFEF; color: #555;">
+            </div>
+            <div class="form-group">
+              <label>Standard Free Shipping Threshold</label>
+              <input type="text" value="₹2,999 (Platform Courier)" disabled style="background: #EFEFEF; color: #555;">
+            </div>
+            <div class="form-group">
+              <label>Standard Flat Delivery Charge</label>
+              <input type="text" value="₹150 (Orders below ₹2,999)" disabled style="background: #EFEFEF; color: #555;">
+            </div>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--color-ink-muted); margin-top: 8px;">
+            <strong>Statutory Rule Notice:</strong> Handloom sarees with selling price &le; ₹1,000 qualify for 5% GST under HSN 5007 / 5208. Products priced above ₹1,000 or comprising composite zari / zardozi may fall under 12% or 18% based on state tax notifications. No blanket concession is applied without verified artisan credentials.
+          </p>
+        </div>
+      </div>
+
+      <!-- Admin Tab 6: Settings &rarr; API & Integrations Control Center -->
+      <div id="admin-tab-integrations" class="admin-sub-tab" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <span class="badge-pill" style="background: rgba(196, 151, 82, 0.15); color: #B45309; border: 1px solid rgba(196, 151, 82, 0.3);">Platform Operations &bull; Settings &rarr; API &amp; Integrations</span>
+            <h3 style="margin-top: 6px; font-family: var(--font-serif-display); font-size: 1.5rem; color: var(--color-ink-primary);">API &amp; Integrations Control Center</h3>
+            <p style="font-size: 0.85rem; color: var(--color-ink-muted); max-width: 680px; margin-top: 4px;">
+              Centrally manage payment gateway, logistics, and notification configurations. All credentials are encrypted at rest with AES-256-GCM and never exposed to client-side code.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline-dark btn-sm" onclick="loadAdminIntegrations()">&#x21bb; Refresh Status</button>
+            <button class="btn btn-gold btn-sm" onclick="runPaytmConnectionTest()">&#x2713; Test Paytm Connection</button>
+          </div>
+        </div>
+
+        <!-- 1. System Integration Health & Summary Overview -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px;">
+          <div style="background: var(--color-surface-warm); padding: 16px 20px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-ink-muted); font-weight: 600;">Active Gateway</span>
+            <div style="font-family: var(--font-serif-display); font-size: 1.35rem; color: var(--color-ink-primary); margin-top: 4px;" id="stat-active-gateway">Paytm Gateway</div>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #047857; margin-top: 6px; display: inline-block;">Primary Active Provider</span>
+          </div>
+          <div style="background: var(--color-surface-warm); padding: 16px 20px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-ink-muted); font-weight: 600;">Environment Mode</span>
+            <div style="font-family: var(--font-serif-display); font-size: 1.35rem; color: var(--color-ink-primary); margin-top: 4px;" id="stat-env-mode">Staging / Sandbox</div>
+            <span class="badge" style="background: rgba(196, 151, 82, 0.15); color: #B45309; margin-top: 6px; display: inline-block;" id="stat-env-badge">Testing Environment</span>
+          </div>
+          <div style="background: var(--color-surface-warm); padding: 16px 20px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-ink-muted); font-weight: 600;">Secret Security</span>
+            <div style="font-family: var(--font-serif-display); font-size: 1.35rem; color: var(--color-ink-primary); margin-top: 4px;">AES-256-GCM</div>
+            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #1D4ED8; margin-top: 6px; display: inline-block;">Encrypted at Rest</span>
+          </div>
+          <div style="background: var(--color-surface-warm); padding: 16px 20px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-ink-muted); font-weight: 600;">Webhook Protection</span>
+            <div style="font-family: var(--font-serif-display); font-size: 1.35rem; color: var(--color-ink-primary); margin-top: 4px;">HMAC-SHA256</div>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #047857; margin-top: 6px; display: inline-block;">Replay Protected</span>
+          </div>
+        </div>
+
+        <!-- 2. Payment Gateway Configuration (Paytm Active + Extensible Stubs) -->
+        <div style="margin-bottom: 32px;">
+          <h4 style="font-family: var(--font-serif-display); font-size: 1.2rem; color: var(--color-ink-primary); margin-bottom: 12px;">Payment Gateways</h4>
+          
+          <!-- Paytm Card (Official Integrated Gateway) -->
+          <div style="background: #FFFFFF; border: 1.5px solid var(--color-gold); border-radius: var(--radius-sm); padding: 24px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <h4 style="margin: 0; font-size: 1.15rem; color: var(--color-ink-primary);">Paytm Payment Gateway</h4>
+                  <span class="status-pill paid" id="paytm-status-pill">Active Provider</span>
+                  <span class="badge" style="background: rgba(0, 186, 242, 0.1); color: #00BAF2; font-weight: 600;">Owner API Configured</span>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--color-ink-muted); margin-top: 4px;">
+                  Official Indian Payment Gateway supporting UPI, Credit/Debit Cards, Net Banking &amp; Paytm Wallet.
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline-dark btn-sm" onclick="openCredentialModal('paytm', 'Paytm Merchant Key')">&#128272; Replace Key</button>
+                <button class="btn btn-gold btn-sm" onclick="runPaytmConnectionTest()">Test Diagnostics</button>
+              </div>
+            </div>
+
+            <form id="form-paytm-config" onsubmit="savePaytmConfig(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+              <div class="form-group">
+                <label for="cfg-paytm-mid">Merchant ID (MID) *</label>
+                <input type="text" id="cfg-paytm-mid" required placeholder="e.g. VESPERA_MID_2026">
+              </div>
+              <div class="form-group">
+                <label for="cfg-paytm-key-masked">Merchant Key (Encrypted Secret)</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="password" id="cfg-paytm-key-masked" value="••••••••" disabled style="background: #F4F4F4; color: #888;">
+                  <button type="button" class="btn btn-outline-dark btn-sm" onclick="openCredentialModal('paytm', 'Paytm Merchant Key')">Change</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cfg-paytm-env">Environment Gateway</label>
+                <select id="cfg-paytm-env">
+                  <option value="staging">Staging / Sandbox (securegw-stage.paytm.in)</option>
+                  <option value="production">Production Live (securegw.paytm.in)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="cfg-paytm-website">Website Parameter</label>
+                <input type="text" id="cfg-paytm-website" placeholder="WEBSTAGING or DEFAULT">
+              </div>
+              <div class="form-group">
+                <label for="cfg-paytm-channel">Channel ID</label>
+                <input type="text" id="cfg-paytm-channel" placeholder="WEB">
+              </div>
+              <div class="form-group">
+                <label for="cfg-paytm-callback">Authoritative Callback URL</label>
+                <input type="text" id="cfg-paytm-callback" readonly style="background: #F4F4F4; color: #666;" value="/api/v1/payments/paytm/callback">
+              </div>
+              <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; margin-top: 8px;">
+                <button type="submit" class="btn btn-dark btn-sm">Save Paytm Settings</button>
+              </div>
+            </form>
+
+            <!-- Live Diagnostic Output Box -->
+            <div id="paytm-diagnostic-box" style="margin-top: 16px; background: #FAF9F6; border: 1px dashed var(--color-border); border-radius: var(--radius-sm); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem;">
+              <div>
+                <strong>Connection Diagnostic:</strong>
+                <span id="paytm-diag-status" style="margin-left: 8px; color: var(--color-ink-muted);">Click "Test Diagnostics" to execute backend verification.</span>
+              </div>
+              <span id="paytm-diag-time" style="color: var(--color-ink-muted); font-size: 0.75rem;"></span>
+            </div>
+          </div>
+
+          <!-- Other Gateways (Clear 'Not Integrated' Stubs with Safe Switching) -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+            <div style="background: var(--color-surface-warm); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px 20px; opacity: 0.85;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="margin: 0; font-size: 0.95rem;">Razorpay Payment Gateway</h5>
+                <span class="status-pill cancelled">Not Integrated</span>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--color-ink-muted); margin: 8px 0 12px;">Adapter planned for multi-gateway failover in future architecture releases.</p>
+              <button class="btn btn-outline-dark btn-sm" disabled style="cursor: not-allowed; opacity: 0.6;">Switch to Razorpay (Blocked)</button>
+            </div>
+
+            <div style="background: var(--color-surface-warm); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 16px 20px; opacity: 0.85;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="margin: 0; font-size: 0.95rem;">Stripe International Payments</h5>
+                <span class="status-pill cancelled">Not Integrated</span>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--color-ink-muted); margin: 8px 0 12px;">Planned for cross-border diaspora and international currency checkout.</p>
+              <button class="btn btn-outline-dark btn-sm" disabled style="cursor: not-allowed; opacity: 0.6;">Switch to Stripe (Blocked)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Shipping, Logistics & Notifications Categories -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 32px;">
+          <!-- Logistics -->
+          <div style="background: #FFFFFF; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h5 style="margin: 0; font-family: var(--font-serif-display); font-size: 1.05rem;">Shipping &amp; Logistics Partners</h5>
+              <span class="badge" style="background: #F4F4F4; color: #666;">2 Providers</span>
+            </div>
+            <div style="padding: 12px; background: var(--color-surface-warm); border-radius: var(--radius-sm); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong>Shiprocket Domestic</strong><br>
+                <small style="color: var(--color-ink-muted);">API Tracking &amp; Label Creation</small>
+              </div>
+              <span class="status-pill under_review">Planned</span>
+            </div>
+            <div style="padding: 12px; background: var(--color-surface-warm); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong>Delhivery Express</strong><br>
+                <small style="color: var(--color-ink-muted);">Surface &amp; Express Cargo</small>
+              </div>
+              <span class="status-pill under_review">Planned</span>
+            </div>
+          </div>
+
+          <!-- Notifications & Email -->
+          <div style="background: #FFFFFF; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h5 style="margin: 0; font-family: var(--font-serif-display); font-size: 1.05rem;">Notifications &amp; Transactional Email</h5>
+              <span class="badge" style="background: #F4F4F4; color: #666;">Transactional</span>
+            </div>
+            <div style="padding: 12px; background: var(--color-surface-warm); border-radius: var(--radius-sm); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong>Resend Transactional API</strong><br>
+                <small style="color: var(--color-ink-muted);">Order confirmation &amp; OTP</small>
+              </div>
+              <span class="status-pill under_review">Planned</span>
+            </div>
+            <div style="padding: 12px; background: var(--color-surface-warm); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong>WhatsApp Business Cloud API</strong><br>
+                <small style="color: var(--color-ink-muted);">Direct artisan shipment alerts</small>
+              </div>
+              <span class="status-pill under_review">Planned</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Webhook Monitoring Panel -->
+        <div style="background: #FFFFFF; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 32px;">
+          <h4 style="font-family: var(--font-serif-display); font-size: 1.15rem; margin-bottom: 12px;">Live Webhook Endpoints &amp; Replay Safeguards</h4>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Integration</th>
+                  <th>Webhook Endpoint URL</th>
+                  <th>Signature Protocol</th>
+                  <th>Replay Protection</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Paytm Payment Gateway</strong></td>
+                  <td><code>/api/v1/payments/paytm/webhook</code></td>
+                  <td>HMAC-SHA256 (x-paytm-signature)</td>
+                  <td><span class="badge" style="background: rgba(16,185,129,0.1); color: #047857;">Idempotent Dedup</span></td>
+                  <td><span class="status-pill paid">Listening &bull; Verified</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Shiprocket Status Sync</strong></td>
+                  <td><code>/api/v1/logistics/shiprocket/webhook</code></td>
+                  <td>Bearer Token</td>
+                  <td>Tracking State Guard</td>
+                  <td><span class="status-pill under_review">Unconfigured</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 5. Configuration History & Audit Logs -->
+        <div>
+          <h4 style="font-family: var(--font-serif-display); font-size: 1.15rem; margin-bottom: 12px;">Integration Audit History &amp; Configuration Log</h4>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Action</th>
+                  <th>Integration</th>
+                  <th>Authorized Administrator</th>
+                  <th>Changed Properties (Secrets Excluded)</th>
+                  <th>Status / Notes</th>
+                </tr>
+              </thead>
+              <tbody id="admin-integrations-history-tbody">
+                <tr><td colspan="6" class="text-center">Loading integration audit records...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </main>
 
   <!-- ========================================================================
-       MODAL 1: PRODUCT DETAILS & INTERACTIVE SIZE GUIDE
+       MODAL: SELLER PRODUCT UPLOAD (Section 1)
        ======================================================================== -->
-  <div class="modal-backdrop" id="product-modal">
-    <div style="background: #fff; width: 90%; max-width: 900px; margin: auto; max-height: 90vh; overflow-y: auto; border-radius: var(--radius-xs); position: relative; padding: 36px;">
-      <button class="close-btn" style="position: absolute; top: 16px; right: 20px;" onclick="closeProductModal()">&times;</button>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 36px;">
+  <div class="modal-overlay" id="modal-seller-add-product" aria-hidden="true" role="dialog">
+    <div class="modal-container" style="max-width: 780px;">
+      <div class="modal-header">
         <div>
-          <div style="width: 100%; padding-top: 133.33%; position: relative; background: #F4F3ED;">
-            <img id="modal-product-img" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+          <span class="badge-pill">Seller Workshop Upload</span>
+          <h3 style="margin-top: 4px; font-family: var(--font-serif-display); font-size: 1.35rem;">Add New Garment to Catalogue</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeAddProductModal()" aria-label="Close modal">&times;</button>
+      </div>
+
+      <form id="seller-add-product-form" onsubmit="submitSellerProduct(event)" class="modal-content-pad">
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label for="prod-title">Garment Title *</label>
+            <input type="text" id="prod-title" required placeholder="e.g. Handspun Bhagalpuri Tussar Silk Saree">
+          </div>
+          <div class="form-group">
+            <label for="prod-category">Marketplace Category *</label>
+            <select id="prod-category" required onchange="handleProductCategoryChange()">
+              <option value="">-- Select from taxonomy --</option>
+              <!-- Populated dynamically from state.categories -->
+            </select>
           </div>
         </div>
 
-        <div>
-          <span id="modal-product-seller" class="product-seller">Atelier</span>
-          <h2 id="modal-product-title" style="font-size: 2rem; margin-bottom: 8px;">Garment Title</h2>
-          <div class="price-main" id="modal-product-price" style="font-size: 1.6rem; margin-bottom: 16px;">₹0</div>
-          
-          <p id="modal-product-desc" style="font-size: 0.9rem; color: var(--color-ink-secondary); margin-bottom: 20px; line-height: 1.6;"></p>
-
-          <div style="margin-bottom: 20px;">
-            <label class="filter-label">Available Color Variants</label>
-            <div id="modal-colors-container" style="display: flex; gap: 8px; margin-top: 6px;"></div>
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label for="prod-subcategory">Subcategory</label>
+            <select id="prod-subcategory">
+              <option value="">-- Select subcategory (optional) --</option>
+            </select>
           </div>
+          <div class="form-group">
+            <label for="prod-brand">Brand / Atelier Label</label>
+            <input type="text" id="prod-brand" placeholder="e.g. Mithila Heritage Weavers Guild">
+          </div>
+        </div>
 
-          <div style="margin-bottom: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-              <label class="filter-label">Select Size</label>
-              <a style="font-size: 0.75rem; text-decoration: underline; cursor: pointer; color: var(--color-champagne);" onclick="toggleSizeGuide()">View Atelier Size Guide</a>
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label for="prod-fabric">Fabric &amp; Material *</label>
+            <input type="text" id="prod-fabric" required placeholder="e.g. 100% Pure Tussar Silk">
+          </div>
+          <div class="form-group">
+            <label for="prod-occasion">Occasion &amp; Styling *</label>
+            <select id="prod-occasion" required>
+              <option value="Wedding">Wedding</option>
+              <option value="Festive" selected>Festive</option>
+              <option value="Royal Evening">Royal Evening</option>
+              <option value="Formal">Formal</option>
+              <option value="Daily Artisanal">Daily Artisanal</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="prod-description">Artisanal Description &amp; Craft Details *</label>
+          <textarea id="prod-description" rows="3" required placeholder="Detail the weave technique, artisan provenance, motif symbolism, and finish..."></textarea>
+        </div>
+
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label for="prod-fit">Fit &amp; Silhouette</label>
+            <input type="text" id="prod-fit" placeholder="e.g. Traditional Drape (6.5m with blouse piece)">
+          </div>
+          <div class="form-group">
+            <label for="prod-care">Care Instructions</label>
+            <input type="text" id="prod-care" placeholder="e.g. Dry clean only. Store in muslin cloth.">
+          </div>
+        </div>
+
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label for="prod-tags">Craft &amp; Style Tags</label>
+            <input type="text" id="prod-tags" placeholder="e.g. handpainted, pit-loom, bridal, tussar">
+          </div>
+          <div class="form-group">
+            <label for="prod-image">Product Photography URL</label>
+            <input type="url" id="prod-image" placeholder="https://... (or leave empty for curated default)">
+          </div>
+        </div>
+
+        <!-- Variant Specification & Commercials -->
+        <div style="background: var(--color-surface-warm); padding: 18px; border-radius: var(--radius-xs); border: 1px solid var(--color-border); margin: 16px 0;">
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; color: var(--color-zari-gold);">Primary Variant &amp; Inventory Details</h4>
+          <div class="form-row-3col">
+            <div class="form-group">
+              <label for="var-color">Color Name *</label>
+              <input type="text" id="var-color" required placeholder="e.g. Madder Crimson">
             </div>
-            <div id="modal-sizes-container" style="display: flex; gap: 8px; margin-top: 6px;"></div>
+            <div class="form-group">
+              <label for="var-size">Size *</label>
+              <select id="var-size" required>
+                <option value="Free Size">Free Size (Sarees/Stoles)</option>
+                <option value="S">S (36)</option>
+                <option value="M">M (38)</option>
+                <option value="L">L (40)</option>
+                <option value="XL">XL (42)</option>
+                <option value="XXL">XXL (44)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="var-sku">SKU Code *</label>
+              <input type="text" id="var-sku" required placeholder="e.g. ICM-TUSSAR-01">
+            </div>
           </div>
-
-          <!-- Collapsible Size Guide -->
-          <div id="size-guide-box" style="display: none; background: var(--color-canvas); border: 1px solid var(--color-border); padding: 14px; margin-bottom: 20px; font-size: 0.78rem;">
-            <strong>Vespera Couture Measurement Standard (Inches)</strong>
-            <p>• Size S (38): Chest 38-39" | Waist 32-33" | Length 44"</p>
-            <p>• Size M (40): Chest 40-41" | Waist 34-35" | Length 45"</p>
-            <p>• Size L (42): Chest 42-43" | Waist 36-37" | Length 45.5"</p>
-            <p>• Free Size (Sari): Length 5.5 Metres + 0.8m Blouse Piece</p>
+          <div class="form-row-3col">
+            <div class="form-group">
+              <label for="var-mrp">MRP (₹) *</label>
+              <input type="number" id="var-mrp" required min="100" placeholder="e.g. 18500" oninput="updateSellerPricingPreview()">
+            </div>
+            <div class="form-group">
+              <label for="var-price">Selling Price (₹) *</label>
+              <input type="number" id="var-price" required min="100" placeholder="e.g. 14800" oninput="updateSellerPricingPreview()">
+            </div>
+            <div class="form-group">
+              <label for="var-cost">Private Cost Price (₹) <span style="font-size: 0.68rem; color: var(--color-ink-muted);">(Strictly Private)</span></label>
+              <input type="number" id="var-cost" min="1" placeholder="e.g. 9500" oninput="updateSellerPricingPreview()">
+            </div>
           </div>
-
-          <div style="border-top: 1px solid var(--color-border); padding-top: 18px; margin-bottom: 24px; font-size: 0.82rem; color: var(--color-ink-secondary);">
-            <p><strong>Fabric:</strong> <span id="modal-product-fabric">Pure Silk</span></p>
-            <p><strong>Occasion:</strong> <span id="modal-product-occasion">Wedding</span></p>
-            <p><strong>Care:</strong> <span id="modal-product-care">Dry clean only</span></p>
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="var-stock">Initial Stock Quantity *</label>
+              <input type="number" id="var-stock" required min="1" max="1000" value="5">
+            </div>
           </div>
-
-          <button class="btn btn-accent" style="width: 100%; padding: 14px;" onclick="addCurrentModalToBag()">Add to Bespoke Bag</button>
         </div>
-      </div>
+
+        <!-- Tax & Statutory Classification (Seller Proposal) -->
+        <div style="background: var(--color-surface-warm); padding: 18px; border-radius: var(--radius-xs); border: 1px solid var(--color-border); margin: 16px 0;">
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; color: var(--color-zari-gold);">Statutory Tax &amp; HSN Classification (Seller Proposal)</h4>
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="prod-hsn">Proposed HSN Code *</label>
+              <input type="text" id="prod-hsn" required pattern="^[0-9]{2,8}$" placeholder="e.g. 5007 (Silk) or 6203 (Menswear)" value="5007">
+            </div>
+            <div class="form-group">
+              <label for="prod-gst-rate">Proposed GST Rate *</label>
+              <select id="prod-gst-rate" required onchange="updateSellerPricingPreview()">
+                <option value="0.05" selected>5% (Handloom / Silk Fabric / Value Concession)</option>
+                <option value="0.12">12% (Apparel / Embroidered Garments)</option>
+                <option value="0.18">18% (Luxury Composite / Bespoke)</option>
+                <option value="0.28">28% (Special High-Value)</option>
+                <option value="0">0% (Nil Rated)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="prod-tax-notes">Tax Classification Justification / Notes</label>
+            <input type="text" id="prod-tax-notes" placeholder="e.g. Pure handwoven Bhagalpuri Tussar silk certified under handloom schedule">
+          </div>
+        </div>
+
+        <!-- Shipping & Delivery Management -->
+        <div style="background: var(--color-surface-warm); padding: 18px; border-radius: var(--radius-xs); border: 1px solid var(--color-border); margin: 16px 0;">
+          <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; color: var(--color-zari-gold);">Shipping Fulfillment Management</h4>
+          <div class="form-row-3col">
+            <div class="form-group">
+              <label for="prod-shipping-method">Fulfillment Mode</label>
+              <select id="prod-shipping-method" onchange="toggleSellerDeliveryChargeInput()">
+                <option value="PLATFORM_STANDARD" selected>Platform Standard Courier (Free above ₹2,999)</option>
+                <option value="SELLER_MANAGED">Seller-Managed Courier (Direct Workshop Dispatch)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prod-delivery-charge">Seller Delivery Charge (₹)</label>
+              <input type="number" id="prod-delivery-charge" min="0" value="0" placeholder="0" disabled oninput="updateSellerPricingPreview()">
+            </div>
+            <div class="form-group">
+              <label for="prod-dispatch-days">Dispatch Preparation (Days)</label>
+              <input type="number" id="prod-dispatch-days" min="1" max="30" value="3">
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Seller Net Settlement & Commercials Calculator -->
+        <div class="seller-earnings-card" id="seller-earnings-preview">
+          <h5>
+            <span>Live Commercials &amp; Net Settlement Preview</span>
+            <span style="font-size: 0.72rem; color: #7A766F; font-weight: normal;">Platform Commission: 12%</span>
+          </h5>
+          <div class="earnings-grid-metrics">
+            <div class="earnings-metric-item">
+              <div class="earnings-metric-label">Selling Price</div>
+              <div class="earnings-metric-val" id="prev-selling-price">₹14,800</div>
+            </div>
+            <div class="earnings-metric-item">
+              <div class="earnings-metric-label">Platform Fee (12%)</div>
+              <div class="earnings-metric-val commission" id="prev-commission">₹1,776</div>
+            </div>
+            <div class="earnings-metric-item">
+              <div class="earnings-metric-label">Net Settlement</div>
+              <div class="earnings-metric-val profit" id="prev-net-proceeds">₹13,024</div>
+            </div>
+            <div class="earnings-metric-item">
+              <div class="earnings-metric-label">Private Cost</div>
+              <div class="earnings-metric-val" id="prev-cost-price">₹9,500</div>
+            </div>
+            <div class="earnings-metric-item">
+              <div class="earnings-metric-label">Est. Gross Profit</div>
+              <div class="earnings-metric-val profit" id="prev-gross-margin">₹3,524 (23.8%)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="padding: 16px 0 0 0; background: transparent; border: none;">
+          <button type="button" class="btn btn-outline-dark" onclick="closeAddProductModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold" id="btn-submit-product">Submit for Moderation →</button>
+        </div>
+      </form>
     </div>
   </div>
 
   <!-- ========================================================================
-       MODAL 2: CART SLIDE-OVER DRAWER
+       MODAL: ADMIN CATEGORY MANAGEMENT (Section 4)
        ======================================================================== -->
-  <div class="drawer-backdrop" id="cart-drawer-backdrop" onclick="closeCartDrawer()"></div>
-  <div class="cart-drawer" id="cart-drawer">
-    <div class="drawer-header">
-      <h3 style="font-size: 1.4rem;">Your Bespoke Bag</h3>
-      <button class="close-btn" onclick="closeCartDrawer()">&times;</button>
-    </div>
+  <div class="modal-overlay" id="modal-admin-category" aria-hidden="true" role="dialog">
+    <div class="modal-container" style="max-width: 650px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge-pill">Marketplace Governance</span>
+          <h3 style="margin-top: 4px; font-family: var(--font-serif-display); font-size: 1.35rem;" id="modal-category-title">Add Global Category</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeAdminCategoryModal()" aria-label="Close modal">&times;</button>
+      </div>
 
-    <div class="drawer-body" id="cart-items-list">
-      <!-- Items dynamically populated -->
-    </div>
+      <form id="admin-category-form" onsubmit="submitAdminCategory(event)" class="modal-content-pad">
+        <input type="hidden" id="cat-form-id" value="">
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label for="cat-name">Category Display Name *</label>
+            <input type="text" id="cat-name" required placeholder="e.g. Royal Jewelry & Heirlooms">
+          </div>
+          <div class="form-group">
+            <label for="cat-slug">URL Slug *</label>
+            <input type="text" id="cat-slug" required placeholder="e.g. royal-jewelry">
+          </div>
+        </div>
 
-    <div class="drawer-footer">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem;">
-        <span>Subtotal</span>
-        <span id="cart-subtotal" style="font-weight: 600;">₹0</span>
-      </div>
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: var(--color-ink-secondary);">
-        <span>Apparel GST (5%)</span>
-        <span id="cart-tax">₹0</span>
-      </div>
-      <div style="display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 0.85rem; color: var(--color-ink-secondary);">
-        <span>Luxury Courier</span>
-        <span id="cart-shipping">Complimentary</span>
-      </div>
-      <div style="display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 1.15rem; font-weight: 700; border-top: 1px solid var(--color-border); padding-top: 10px;">
-        <span>Estimated Total</span>
-        <span id="cart-total">₹0</span>
-      </div>
-      <button class="btn btn-primary" style="width: 100%; padding: 14px;" onclick="openCheckoutModal()">Proceed to Checkout</button>
+        <div class="form-group">
+          <label for="cat-desc">Description</label>
+          <textarea id="cat-desc" rows="2" placeholder="Brief description of this artisanal department..."></textarea>
+        </div>
+
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label for="cat-subtitle">Homepage Subtitle / Kicker</label>
+            <input type="text" id="cat-subtitle" placeholder="e.g. Kundan & Polki Heirlooms">
+          </div>
+          <div class="form-group">
+            <label for="cat-tag">Merchandising Badge</label>
+            <input type="text" id="cat-tag" placeholder="e.g. Imperial Heirlooms">
+          </div>
+        </div>
+
+        <div class="form-row-2col">
+          <div class="form-group">
+            <label for="cat-order">Display Order</label>
+            <input type="number" id="cat-order" value="8" min="1">
+          </div>
+          <div class="form-group">
+            <label for="cat-image">Department Image URL</label>
+            <input type="text" id="cat-image" placeholder="/assets/campaigns/campaign-accessories.jpg">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cat-subcategories">Subcategories (comma-separated)</label>
+          <input type="text" id="cat-subcategories" placeholder="e.g. Polki Necklaces, Jadau Bangles, Maang Tikka">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; margin: 14px 0;">
+          <input type="checkbox" id="cat-show-home" checked style="width: 18px; height: 18px;">
+          <label for="cat-show-home" style="font-size: 0.85rem; font-weight: 500; cursor: pointer;">Show in Homepage Department Discovery &amp; Merchandising</label>
+        </div>
+
+        <div class="modal-footer" style="padding: 16px 0 0 0; background: transparent; border: none;">
+          <button type="button" class="btn btn-outline-dark" onclick="closeAdminCategoryModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold">Save Category &rarr;</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- ========================================================================
-       MODAL 3: BESPOKE CHECKOUT
-       ======================================================================== -->
-  <div class="modal-backdrop" id="checkout-modal">
-    <div style="background: #fff; width: 90%; max-width: 600px; margin: auto; border-radius: var(--radius-xs); padding: 36px; position: relative;">
-      <button class="close-btn" style="position: absolute; top: 16px; right: 20px;" onclick="closeCheckoutModal()">&times;</button>
-      
-      <h3 style="font-size: 1.8rem; margin-bottom: 4px;">Atelier Checkout</h3>
-      <p style="font-size: 0.82rem; color: var(--color-ink-muted); margin-bottom: 24px;">Orders with multiple sellers are split into dedicated fulfilment sub-orders automatically.</p>
-
-      <div style="display: flex; flex-direction: column; gap: 14px;">
+  <!-- Modal: Replace Integration Credential Secret -->
+  <div class="modal-overlay" id="modal-admin-credential-replace" aria-hidden="true" role="dialog" style="display: none;">
+    <div class="modal-container" style="max-width: 520px;">
+      <div class="modal-header">
         <div>
-          <label class="filter-label">Recipient Full Name</label>
-          <input type="text" id="chk-name" class="filter-select" style="width: 100%;" value="Devika Rathore">
+          <span class="badge-pill" style="background: rgba(196,151,82,0.15); color: #B45309;">Secret Vault Encryption</span>
+          <h3 id="modal-credential-title" style="margin-top: 4px; font-family: var(--font-serif-display); font-size: 1.25rem;">Replace Merchant Secret</h3>
         </div>
-        <div>
-          <label class="filter-label">Delivery Address</label>
-          <input type="text" id="chk-street" class="filter-select" style="width: 100%;" value="14 Palace Enclave, Civil Lines">
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <div>
-            <label class="filter-label">City</label>
-            <input type="text" id="chk-city" class="filter-select" style="width: 100%;" value="Jaipur">
-          </div>
-          <div>
-            <label class="filter-label">PIN Code</label>
-            <input type="text" id="chk-pin" class="filter-select" style="width: 100%;" value="302006">
-          </div>
-        </div>
-        <div>
-          <label class="filter-label">Contact Phone</label>
-          <input type="text" id="chk-phone" class="filter-select" style="width: 100%;" value="+91-9876543210">
-        </div>
-
-        <div style="border-top: 1px solid var(--color-border); padding-top: 14px; margin-top: 6px;">
-          <label class="filter-label" style="display: block; margin-bottom: 8px;">Select Payment Simulation Mode</label>
-          <div style="display: flex; gap: 12px;">
-            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer;">
-              <input type="radio" name="pay-method" checked> UPI / NetBanking Sandbox
-            </label>
-            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 6px; cursor: pointer;">
-              <input type="radio" name="pay-method"> Card Tokenization (Simulated)
-            </label>
-          </div>
-        </div>
-
-        <button class="btn btn-accent" style="width: 100%; padding: 14px; margin-top: 12px;" onclick="executeCheckoutOrder()">Place Order & Split Fulfilment</button>
+        <button class="modal-close-btn" onclick="closeCredentialModal()" aria-label="Close modal">&times;</button>
       </div>
+
+      <form id="admin-credential-form" onsubmit="submitCredentialReplacement(event)" class="modal-content-pad">
+        <input type="hidden" id="cred-integration-id">
+        <p style="font-size: 0.82rem; color: var(--color-ink-muted); margin-bottom: 16px;">
+          The new signing secret will be encrypted immediately using AES-256-GCM. Stored values are never transmitted back to client browsers or printed in server logs.
+        </p>
+
+        <div class="form-group">
+          <label for="cred-new-secret" id="lbl-new-secret">New Merchant Secret / Signing Key *</label>
+          <input type="password" id="cred-new-secret" required placeholder="Enter new secret key" autocomplete="new-password">
+          <small style="font-size: 0.72rem; color: var(--color-ink-muted); margin-top: 4px; display: block;">Minimum 8 characters. Case sensitive.</small>
+        </div>
+
+        <div class="form-group" style="margin-top: 12px;">
+          <label for="cred-confirm-secret">Confirm New Secret *</label>
+          <input type="password" id="cred-confirm-secret" required placeholder="Re-enter secret to confirm" autocomplete="new-password">
+        </div>
+
+        <div class="modal-footer" style="padding: 16px 0 0 0; background: transparent; border: none; display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" class="btn btn-outline-dark btn-sm" onclick="closeCredentialModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold btn-sm">Encrypt &amp; Store Secret &rarr;</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Client JavaScript Application -->
+  <!-- Reusable Site Footer Template (Injected into pages) -->
+  <footer class="site-footer" id="master-footer">
+    <div class="footer-inner">
+      <div class="footer-col">
+        <h4 class="brand-main" style="color: #FAF8F5; font-size: 1.25rem;">ICM MADHUBANI</h4>
+        <p style="margin-top: 4px; color: var(--color-zari-gold); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;">Ishani Collection Mithila</p>
+        <p style="margin-top: 14px; line-height: 1.6; color: #9C988F;">
+          Dedicated to Indian haute couture, royal bridal heirlooms, and authentic Mithila handloom craft. Preserving living weaving traditions with modern bespoke design.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Artisanal Collections</h5>
+        <ul>
+          <li><a href="/category/cat_ethnic">Handpainted Tussar Saris</a></li>
+          <li><a href="/category/cat_wedding">Imperial Bridal Lehengas</a></li>
+          <li><a href="/category/cat_men">Royal Bespoke Bandhgalas</a></li>
+          <li><a href="/category/cat_accessories">Mithila Silk Stoles</a></li>
+          <li><a href="/category/cat_footwear">Zardozi Mojaris</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Provenance & Trust</h5>
+        <ul>
+          <li><a href="/brands">Handloom Craft Origin</a></li>
+          <li><a href="/brands">Two-Tier Quality Review</a></li>
+          <li><a href="/shop">Authentic Master Artisan Craft</a></li>
+          <li><a href="mailto:desk@icm-madhubani.local">Public Grievance Desk</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Client Concierge</h5>
+        <ul>
+          <li><a href="/cart">View Shopping Bag</a></li>
+          <li><a href="/wishlist">Saved Heirlooms</a></li>
+          <li><a href="/account/orders">Track Shipment</a></li>
+          <li><a href="/account/returns">Returns & Exchanges</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>
+        © 2026 ICM Madhubani (Ishani Collection Mithila). All rights reserved. Platform owner personal data is protected by design.
+      </div>
+      <div class="discrete-portal-links">
+        <a href="/seller/orders" class="discrete-portal-link">Artisan & Seller Partner Portal</a>
+        <span id="footer-admin-separator" style="color: #444; display: none;">•</span>
+        <a href="/admin/moderation" class="discrete-portal-link" id="footer-admin-link" style="display: none;">Platform Owner Governance Console</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Product Quick View Modal Backdrop & Modal -->
+  <div class="quick-view-backdrop" id="quick-view-backdrop" onclick="closeQuickView()" style="display: none;"></div>
+  <div class="quick-view-modal" id="quick-view-modal" role="dialog" aria-modal="true" aria-labelledby="quick-view-title" style="display: none;">
+    <button type="button" class="quick-view-close-btn" id="quick-view-close-btn" onclick="closeQuickView()" aria-label="Close Quick View">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <div class="quick-view-content" id="quick-view-content">
+      <!-- Injected dynamically via JS -->
+    </div>
+  </div>
+
+  <!-- Back to Top Floating Button -->
+  <button type="button" class="back-to-top-btn" id="back-to-top-btn" onclick="scrollToTop()" aria-label="Back to Top" title="Back to Top">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
   <script src="/app.js"></script>
 </body>
 </html>
